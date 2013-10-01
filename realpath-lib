@@ -1,0 +1,130 @@
+#!/usr/bin/env bash
+
+# realpath-lib : realpath library for bash file path resolution and validation.
+# No external dependencies - it relies on the bash builtins 'cd' and 'echo' - 
+# and a little bit of script-foo.  Designed for portability purposes.
+#
+# Usage:    source /path/to/realpath-lib
+#
+# Output:   (none)
+#
+# Functions:
+#   
+#   Each of the below returns the exit status as:
+#
+#       0: success (path or file is found)
+#       1: failure (path or file is not found)
+#
+#   </path/to/source.ext> an absolute path, a relative path or a local file.
+#
+#   get_realpath  </path/to/source.ext>  :  returns the file path of a file.
+#   get_dirname   </path/to/source.ext>  :  returns the directory of a file.
+#   get_filename  </path/to/source.ext>  :  returns the file name of a path.*
+#   get_stemname  </path/to/source.ext>  :  returns the stem name of a path.**
+#   validate_path </path/to/source.ext>  :  returns nothing, aborts on error.***
+#
+#    *the filename is the file name and extension eg. 'source.ext'.
+#   **the stemname is the file name without the extension eg. 'source'. Note
+#     that a file name such as 'source.tar.gz' will be returned as 'source'.
+#  ***WARNING: using validate_path at shell level will kill the shell!
+#
+#   How to test return values:
+#
+#       get_realpath "$1" &>/dev/null
+#       if (( $? ))  # true when non-zero.
+#       then
+#           # Do failure actions.
+#           return 1 # Failure.
+#       fi
+#
+# Copyright (C) Applied Numerics Ltd 2013 under the brand name AsymLabs (TM) 
+# and published under the terms of the MIT license.  Although we have not 
+# yet encountered any issues, there is no warrany of any type given so you 
+# must use it at your own risk.  You have been warned.
+#
+# Comments are welcomed and may be forwarded to the author at:
+#
+#           mailto:dv@angb.co
+# 
+
+# Created by G R Summers Fri 27 Sep 2013 11:30:11 BST
+# Updated by G R Summers Tue 01 Oct 2013 13:12:36 BST  
+
+# get_realpath <file-path> : constructs an absolute path from a file, full path 
+# name or relative path name - for portability purposes - returns non-zero if
+# path is not found.  This should follow symlinks as this is the default be-
+# haviour of the cd buitlin.
+function get_realpath() {
+    
+    if [[ -f "$1" ]]
+    then # file exists
+        if cd "$(echo "${1%/*}")" &>/dev/null
+        then # file is not in local directory
+            local realpath="$PWD/${1##*/}"
+            cd - &>/dev/null
+        else # file is in local directory
+            local realpath="$PWD/$1"
+        fi
+    else # file does not exist
+        return 1 # failure
+    fi
+    echo "$realpath"
+    return 0 # success
+}
+
+# get_dirname <file-path> : strips the source file name from a full path - for
+# portability purposes - uses get_realpath - returns non-zero if directory is
+# not found.
+function get_dirname(){
+
+    local realpath="$(get_realpath "$1")"
+    if (( $? ))  # true when non-zero.
+    then  
+        return $? # failure
+    fi
+    echo "${realpath%/*}"
+    return 0 # success
+    
+}
+
+# get_filename <file-path> : gets a file name from a file path - for portability
+# purposes - uses get_realpath - returns non-zero if filename is not found.
+function get_filename(){
+
+    local realpath="$(get_realpath "$1")"
+    if (( $? ))  # true when non-zero.
+    then  
+        return $? # failure
+    fi
+    echo "${realpath##*/}"
+    return 0 # success
+    
+}
+
+# get_stemname <file-path> gets a stem name (removes path and extension) from 
+# a file path - for portability purposes - uses get_filename - returns non-zero
+# stemname cannot be made.
+function get_stemname(){
+
+    local filename="$(get_filename "$1")"
+    if (( $? ))  # true when non-zero.
+    then  
+        return $? # failure
+    fi
+    echo "${filename%%.*}"
+    return 0 # success
+    
+}
+
+# validate_path <file-path> : validate that file path exists or exit - use exit
+# condition from 'get_realpath' to test.
+function validate_path() {
+
+    get_realpath "$1" &>/dev/null
+    if (( $? ))  # true when non-zero.
+    then  
+        echo "Something is wrong, '$1' not found, exiting ..."
+        exit 1 # exit error
+    fi
+    
+}
