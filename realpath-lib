@@ -1,8 +1,8 @@
 #!/usr/bin/env bash
 
 # realpath-lib : realpath library for bash file path resolution and validation.
-# No external dependencies - it relies on the bash builtins 'cd' and 'echo' - 
-# and a little bit of script-foo.  Designed for portability purposes.
+# No external dependencies - it relies on the bash builtins 'cd' and 'echo' and 
+# a little bit of script-foo path munching.  Designed for portability.
 #
 # Usage:    source /path/to/realpath-lib
 #
@@ -52,8 +52,8 @@
 
 # get_realpath <file-path> : constructs an absolute path from a file, full path 
 # name or relative path name - for portability purposes - returns non-zero if
-# path is not found.  This should follow symlinks as this is the default be-
-# haviour of the cd buitlin.
+# path is not found - should follow symlinks as this is the default behaviour
+# of the 'cd' builtin.
 function get_realpath() {
     
     if [[ -f "$1" ]]
