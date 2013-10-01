@@ -1,0 +1,201 @@
+<!doctype html>
+<html>
+  <head>
+    <meta charset="utf-8">
+    <meta http-equiv="X-UA-Compatible" content="chrome=1">
+    <title>Realpath-lib by AsymLabs</title>
+    <link rel="stylesheet" href="stylesheets/styles.css">
+    <link rel="stylesheet" href="stylesheets/pygment_trac.css">
+    <script src="https://ajax.googleapis.com/ajax/libs/jquery/1.7.1/jquery.min.js"></script>
+    <script src="javascripts/respond.js"></script>
+    <!--[if lt IE 9]>
+      <script src="//html5shiv.googlecode.com/svn/trunk/html5.js"></script>
+    <![endif]-->
+    <!--[if lt IE 8]>
+    <link rel="stylesheet" href="stylesheets/ie.css">
+    <![endif]-->
+    <meta name="viewport" content="width=device-width, initial-scale=1, user-scalable=no">
+
+  </head>
+  <body>
+      <div id="header">
+        <nav>
+          <li class="fork"><a href="https://github.com/AsymLabs/realpath-lib">View On GitHub</a></li>
+          <li class="downloads"><a href="https://github.com/AsymLabs/realpath-lib/zipball/master">ZIP</a></li>
+          <li class="downloads"><a href="https://github.com/AsymLabs/realpath-lib/tarball/master">TAR</a></li>
+          <li class="title">DOWNLOADS</li>
+        </nav>
+      </div><!-- end header -->
+
+    <div class="wrapper">
+
+      <section>
+        <div id="title">
+          <h1>Realpath-lib</h1>
+          <p>Bash-centric realpath tools for cross-platform portability.</p>
+          <hr>
+          <span class="credits left">Project maintained by <a href="https://github.com/AsymLabs">AsymLabs</a></span>
+          <span class="credits right">Hosted on GitHub Pages &mdash; Theme by <a href="https://twitter.com/michigangraham">mattgraham</a></span>
+        </div>
+
+        <h1>
+<a name="realpath-lib" class="anchor" href="#realpath-lib"><span class="octicon octicon-link"></span></a>realpath-lib</h1>
+
+<p>The lightweight and simple Bash script <code>realpath-lib</code> provdes functions that can 
+resolve the full path associated with a file name.   These functions are:  </p>
+
+<blockquote>
+<p>get_realpath<br>
+get_dirname<br>
+get_filename<br>
+get_stemname<br>
+validate_path  </p>
+</blockquote>
+
+<p><code>realpath-lib</code> was inspired in part by the numerous other realpath tools that
+can found.  We are not aware of a Bash specific version that does not require
+external dependencies.  This is pure Bash.  </p>
+
+<h1>
+<a name="motivation" class="anchor" href="#motivation"><span class="octicon octicon-link"></span></a>Motivation</h1>
+
+<p>Recent work writing scripts that should function the same way across Mac, Linux,
+and Windows has revealed that certain system tools are not available for all
+platforms.  Quite often the standard way of resolving file names, such as the
+use of <code>basename</code>, has led to portability problems.  </p>
+
+<p>For this reason we have prepared this set of tools for use in Bash scripts.  It
+uses only built-in features and should not require anything else.   </p>
+
+<h1>
+<a name="dependencies" class="anchor" href="#dependencies"><span class="octicon octicon-link"></span></a>Dependencies</h1>
+
+<p>Bash 4+ and nothing else.  This could be prepared to work with earlier versions 
+but we leave that exercise to others.  </p>
+
+<h1>
+<a name="features" class="anchor" href="#features"><span class="octicon octicon-link"></span></a>Features</h1>
+
+<p>The path argument can be provded as local file names, relative paths and absolute
+paths.  It might even take symlinks but we have not yet verfied this.  Functions
+are classified into two groups: getters and validators.  </p>
+
+<h2>
+<a name="getters" class="anchor" href="#getters"><span class="octicon octicon-link"></span></a>Getters</h2>
+
+<p>The following functions will resolve the path argument to a full absolute path
+string (if it is found) and return an exit condition of <strong>0 for success</strong> and 
+<strong>1 for failure</strong> - meaning they can be used for testing purposes too.  </p>
+
+<blockquote>
+<p>get_realpath 'path-arg'<br>
+get_dirname 'path-arg'<br>
+get_filename 'path-arg'<br>
+get_stemname 'path-arg'  </p>
+
+<p>where <strong>path-arg</strong> can be a local file, a relative path or absolute path.   </p>
+</blockquote>
+
+<h2>
+<a name="validators" class="anchor" href="#validators"><span class="octicon octicon-link"></span></a>Validators</h2>
+
+<p>The final function <code>validate_path</code> will return an exit condition of <strong>0 for success</strong>
+or will <strong>abort on failure</strong>.  This leads us to the following warning: <strong>do not use
+this at the top level of your shell - it will kill it!</strong>  </p>
+
+<blockquote>
+<p>validate_path 'path-arg'  </p>
+
+<p>where <strong>path-arg</strong> is the same as above.  </p>
+</blockquote>
+
+<h1>
+<a name="usage" class="anchor" href="#usage"><span class="octicon octicon-link"></span></a>Usage</h1>
+
+<p>This is not a Bash executable.  Source it at the beginning of your executable script
+with:  </p>
+
+<div class="highlight highlight-bash"><pre><span class="nb">source</span> <span class="s1">'/your/path/to/realpath-lib'</span>
+</pre></div>
+
+<p>That's it.</p>
+
+<h1>
+<a name="examples" class="anchor" href="#examples"><span class="octicon octicon-link"></span></a>Examples</h1>
+
+<p>To use the 'getters' for testing purposes, do something like:  </p>
+
+<div class="highlight highlight-bash"><pre>get_realpath <span class="s2">"$1"</span> &amp;&gt;/dev/null
+<span class="k">if</span> <span class="o">((</span> <span class="nv">$?</span> <span class="o">))</span>  <span class="c"># true when non-zero.</span>
+<span class="k">then</span>
+    <span class="c"># Do failure actions. </span>
+    <span class="k">return </span>1 <span class="c"># Failure. </span>
+<span class="k">fi</span>
+</pre></div>
+
+<p>While these are designed to be used exclusively in scripts, some top level
+Bash shell examples are:  </p>
+
+<blockquote>
+<p>[user@a52j MyLib]$ ls '/home/user/MyLib/archive.tar.gz'<br>
+/home/user/MyLib/archive.tar.gz  </p>
+
+<p>[user@a52j MyLib]$ source realpath-lib<br>
+[user@a52j MyLib]$  </p>
+
+<p>[user@a52j MyLib]$ get_realpath 'archive.tar.gz'<br>
+/home/user/MyLib/archive.tar.gz  </p>
+
+<p>[user@a52j MyLib]$ get_dirname 'archive.tar.gz'<br>
+/home/user/MyLib  </p>
+
+<p>[user@a52j MyLib]$ get_filename 'archive.tar.gz'<br>
+archive.tar.gz  </p>
+
+<p>[user@a52j MyLib]$ get_stemname 'archive.tar.gz'<br>
+archive  </p>
+
+<p>[user@a52j MyLib]$ validate_path 'archive.tar.gz'<br>
+[user@a52j MyLib]$  </p>
+
+<p>[user@a52j MyLib]$ cd ../Templates<br>
+[user@a52j Templates]$  </p>
+
+<p>[user@a52j Templates]$ get_realpath '../MyLib/archive.tar.gz'<br>
+/home/user/MyLib/archive.tar.gz  </p>
+
+<p>[user@a52j Templates]$ get_dirname '../MyLib/archive.tar.gz'<br>
+/home/user/MyLib  </p>
+
+<p>[user@a52j Templates]$ get_filename '../MyLib/archive.tar.gz'<br>
+archive.tar.gz  </p>
+
+<p>[user@a52j Templates]$ get_stemname '../MyLib/archive.tar.gz'<br>
+archive  </p>
+
+<p>[user@a52j Templates]$ validate_path '../MyLib/archive.tar.gz'<br>
+[user@a52j Templates]$  </p>
+</blockquote>
+
+<h1>
+<a name="terms" class="anchor" href="#terms"><span class="octicon octicon-link"></span></a>Terms</h1>
+
+<p>We offer this to the community for free and you may use it as you wish.  </p>
+
+<p>This source is Copyright (C) Applied Numerics Ltd 2013 under the brand name 
+AsymLabs (TM) and is provided to the community under the MIT license.  Although 
+we have not yet encountered any issues, there is no warrany of any type given 
+so you must use it at your own risk.  </p>
+
+<h1>
+<a name="closure" class="anchor" href="#closure"><span class="octicon octicon-link"></span></a>Closure</h1>
+
+<p>We hope that you find this Bash library to be of value.  Should you have any 
+comments or suggestions for improvement please let us know at dv@angb.co.  </p>
+      </section>
+
+    </div>
+    <!--[if !IE]><script>fixScale(document);</script><![endif]-->
+    
+  </body>
+</html>
