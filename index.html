@@ -39,7 +39,7 @@
         </div>
 
         <h1>
-<a name="realpath-lib" class="anchor" href="#realpath-lib"><span class="octicon octicon-link"></span></a>realpath-lib</h1>
+<a name="introduction" class="anchor" href="#introduction"><span class="octicon octicon-link"></span></a>Introduction</h1>
 
 <p>The lightweight and simple Bash library <code>realpath-lib</code> provides functions that
 can resolve the full path associated with a file name.   These functions are:  </p>
@@ -56,8 +56,8 @@ validate_path  </p>
 languages.  We are not aware of a Bash specific version that does not require
 external or other platform specific dependencies.  This is pure Bash.  </p>
 
-<h1>
-<a name="motivation" class="anchor" href="#motivation"><span class="octicon octicon-link"></span></a>Motivation</h1>
+<h3>
+<a name="motivation" class="anchor" href="#motivation"><span class="octicon octicon-link"></span></a>Motivation</h3>
 
 <p>Recent work writing scripts that should function the same way across Mac, Linux
 and Windows has revealed that certain system/Bash tools are not available for
@@ -67,8 +67,8 @@ the use of <em>basename</em>, <em>readlink</em> or others has led to portability
 <p>For this reason we have prepared this set of tools for use in Bash scripts.  It
 uses only simple built-in features and should not require anything else.   </p>
 
-<h1>
-<a name="dependencies" class="anchor" href="#dependencies"><span class="octicon octicon-link"></span></a>Dependencies</h1>
+<h3>
+<a name="dependencies" class="anchor" href="#dependencies"><span class="octicon octicon-link"></span></a>Dependencies</h3>
 
 <p>Bash 4+ and nothing else.  This could be revised to work with earlier versions
 but we leave this as an exercise for others.  </p>
@@ -81,8 +81,8 @@ absolute path.  It should permit symlinks but we have not yet verified this
 across platforms.  Functions are classified into two groups: getters and
 validators.  </p>
 
-<h2>
-<a name="getters" class="anchor" href="#getters"><span class="octicon octicon-link"></span></a>Getters</h2>
+<h3>
+<a name="getters" class="anchor" href="#getters"><span class="octicon octicon-link"></span></a>Getters</h3>
 
 <p>The following functions will resolve the path argument to a full absolute path
 string (if it is found) and return an exit condition of <strong>0 for success</strong> and 
@@ -97,8 +97,8 @@ get_stemname 'path-arg'  </p>
 <p>where <strong>path-arg</strong> can be a local file, a relative path or absolute path.   </p>
 </blockquote>
 
-<h2>
-<a name="validators" class="anchor" href="#validators"><span class="octicon octicon-link"></span></a>Validators</h2>
+<h3>
+<a name="validators" class="anchor" href="#validators"><span class="octicon octicon-link"></span></a>Validators</h3>
 
 <p>The function <code>validate_path</code> will return an exit condition of <strong>0 for success</strong>
 or will <strong>abort on failure</strong>.  This leads us to the following warning: <strong>do not
