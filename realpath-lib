@@ -60,16 +60,17 @@ function get_realpath() {
     then # file exists
         if cd "$(echo "${1%/*}")" &>/dev/null
         then # file is not in local directory
-            local realpath="$PWD/${1##*/}"
+            local tmpdir="$PWD"
             cd - &>/dev/null
         else # file is in local directory
-            local realpath="$PWD/$1"
+            local tmpdir="$PWD"
         fi
     else # file does not exist
         return 1 # failure
     fi
-    echo "$realpath"
+    echo "$tmpdir"/"${1##*/}"
     return 0 # success
+
 }
 
 # get_dirname <file-path> : strips the source file name from a full path - for
