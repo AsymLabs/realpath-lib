@@ -10,9 +10,10 @@ can resolve the full path associated with a file name.   These functions are:
 >get_stemname  
 >validate_path  
 
-`realpath-lib` was inspired in part by realpath tools that provided in other
-languages.  We are not aware of a Bash specific version that does not require
-external or other platform specific dependencies.  This is pure Bash.  
+`realpath-lib` was inspired in part by realpath tools that are available in
+other programming languages.  We are not aware of a Bash specific version that
+does not require external or other platform specific dependencies.  This is pure
+Bash. It just works.
 
 Motivation
 ==========
