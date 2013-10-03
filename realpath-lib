@@ -57,18 +57,26 @@
 function get_realpath() {
     
     if [[ -f "$1" ]]
-    then # file exists
+    then 
+        # file *must* exist
         if cd "$(echo "${1%/*}")" &>/dev/null
-        then # file is not in local directory
-            local tmpdir="$PWD"
+        then 
+            # file *may* not be local
+            # exception is ./file.ext
+            # try 'cd ./; cd -;' *works!*
+            local tmppwd="$PWD"
             cd - &>/dev/null
-        else # file is in local directory
-            local tmpdir="$PWD"
+        else 
+            # file *must* be local
+            local tmppwd="$PWD"
         fi
-    else # file does not exist
+    else 
+        # file *cannot* exist
         return 1 # failure
     fi
-    echo "$tmpdir"/"${1##*/}"
+
+    # reassemble realpath
+    echo "$tmppwd"/"${1##*/}"
     return 0 # success
 
 }
