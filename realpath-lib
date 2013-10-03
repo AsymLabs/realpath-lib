@@ -50,6 +50,12 @@
 # Created by G R Summers Fri 27 Sep 2013 11:30:11 BST
 # Updated by G R Summers Tue 01 Oct 2013 13:12:36 BST  
 
+# Enviromment.  Set this to avoid symlinks.  By default the builtin 'cd' 
+# follows symlinks.  Putting 'set -P' at the beginning of the file ensures
+# that the physical system is used.  Default setting is to follow symlinks, 
+# uncomment the following to use the physical system only.
+# set -P 
+
 # get_realpath <file-path> : constructs an absolute path from a file, full path 
 # name or relative path name - for portability purposes - returns non-zero if
 # path is not found - should follow symlinks as this is the default behaviour
