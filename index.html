@@ -82,6 +82,9 @@ absolute path.  It should permit symlinks but we have not yet verified this
 across platforms.  Functions are classified into two groups: getters and
 validators.  </p>
 
+<p>You can also ensure that symlinks are avoided (physical system only) by setting
+the environment near the beginning of the script.  </p>
+
 <h3>
 <a name="getters" class="anchor" href="#getters"><span class="octicon octicon-link"></span></a>Getters</h3>
 
@@ -120,6 +123,9 @@ script with:  </p>
 
 <div class="highlight highlight-bash"><pre><span class="nb">source</span> <span class="s1">'/your/path/to/realpath-lib'</span>
 </pre></div>
+
+<p>To avoid symlinks completely (use the physical system only), uncomment 'set -P'
+under 'Environment' near the beginning of the script.  </p>
 
 <p>That's it.</p>
 
