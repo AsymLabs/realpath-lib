@@ -39,6 +39,9 @@ The path argument can be provided as a local file name, relative path or an
 absolute path.  It should permit symlinks but we have not yet verified this
 across platforms.  Functions are classified into two groups: getters and
 validators.  
+  
+You can also make the script avoid symlinks (use the physical system only) by
+altering the environment settings.  
 
 Getters
 -------
@@ -73,6 +76,9 @@ This is not a Bash executable.  Source it at the beginning of your executable
 script with:  
 
     source '/your/path/to/realpath-lib'
+
+To make the script avoid symlinks (use the physical system only), uncomment 
+'set -P' under the section called 'Environment' near the top of the script.
 
 That's it.
   
