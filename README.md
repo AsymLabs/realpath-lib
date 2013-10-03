@@ -77,8 +77,8 @@ script with:
 
     source '/your/path/to/realpath-lib'
 
-To make the script avoid symlinks (use the physical system only), uncomment 
-'set -P' under the section called 'Environment' near the top of the script.
+To avoid symlinks completely (use the physical system only), uncomment 'set -P'
+under 'Environment' near the beginning of the script.
 
 That's it.
   
