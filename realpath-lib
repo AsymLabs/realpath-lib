@@ -63,7 +63,7 @@ function get_realpath() {
         then 
             # file *may* not be local
             # exception is ./file.ext
-            # try 'cd ./; cd -;' *works!*
+            # try 'cd .; cd -;' *works!*
             local tmppwd="$PWD"
             cd - &>/dev/null
         else 
