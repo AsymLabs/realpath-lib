@@ -62,8 +62,8 @@ Validators
 
 The function `validate_realpath` will return an exit condition of **0 for success**
 or will **abort on failure**.  This leads us to the following warning: **do not
-use validate_path at the top level of your shell - as a failure to validate will
-kill it and any sub-processes!**  
+use validate_realpath at the top level of your shell - as a failure to validate
+will kill the shell and any sub-processes!**  
   
 >validate_realpath 'path-arg'  
 >  
