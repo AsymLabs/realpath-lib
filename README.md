@@ -8,7 +8,7 @@ can resolve the full path associated with a file name.   These functions are:
 >get_dirname  
 >get_filename  
 >get_stemname  
->validate_path  
+>validate_realpath  
 
 `realpath-lib` was inspired in part by realpath tools that are available in
 other programming languages.  We are not aware of a Bash specific version that
@@ -36,8 +36,8 @@ Features
 ========
 
 The path argument can be provided as a local file name, relative path or an
-absolute path.  It should permit symlinks but we have not yet verified this
-across platforms.  Functions are classified into two groups: getters and
+absolute path.  It should permit symlinks by default but we have not yet verified
+this across platforms.  Functions are classified into two groups: getters and
 validators.  
   
 You can also make the script avoid symlinks (use the physical system only) by
@@ -60,12 +60,12 @@ string (if it is found) and return an exit condition of **0 for success** and
 Validators
 ----------
 
-The function `validate_path` will return an exit condition of **0 for success**
+The function `validate_realpath` will return an exit condition of **0 for success**
 or will **abort on failure**.  This leads us to the following warning: **do not
 use validate_path at the top level of your shell - as a failure to validate will
 kill it and any sub-processes!**  
   
->validate_path 'path-arg'  
+>validate_realpath 'path-arg'  
 >  
 >where **path-arg** is the same as above.  
 
@@ -77,8 +77,8 @@ script with:
 
     source '/your/path/to/realpath-lib'
 
-To avoid symlinks completely (use the physical system only), uncomment `set -P`
-under 'Environment' near the beginning of the script.
+To avoid symlinks completely (use the physical system), uncomment `no_symlinks`
+under 'Environment' (near the beginning of the script).
 
 That's it.
   
@@ -115,7 +115,7 @@ examples are:
 >[user@a52j MyLib]$ get_stemname 'archive.tar.gz'  
 >archive  
 >  
->[user@a52j MyLib]$ validate_path 'archive.tar.gz'  
+>[user@a52j MyLib]$ validate_realpath 'archive.tar.gz'  
 >[user@a52j MyLib]$  
 >  
 >[user@a52j MyLib]$ cd ../Templates  
@@ -133,7 +133,7 @@ examples are:
 >[user@a52j Templates]$ get_stemname '../MyLib/archive.tar.gz'  
 >archive  
 >  
->[user@a52j Templates]$ validate_path '../MyLib/archive.tar.gz'  
+>[user@a52j Templates]$ validate_realpath '../MyLib/archive.tar.gz'  
 >[user@a52j Templates]$  
 
 Terms
