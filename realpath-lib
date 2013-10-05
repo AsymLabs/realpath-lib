@@ -48,41 +48,22 @@
 # 
 
 # Created by G R Summers Fri 27 Sep 2013 11:30:11 BST
-# Updated by G R Summers Tue 01 Oct 2013 13:12:36 BST  
+# Updated by G R Summers Sat 05 Oct 2013 06:19:30 BST
 
-# Enviromment.  Set this to avoid symlinks.  By default the builtin 'cd' 
-# follows symlinks.  Putting 'set -P' at the beginning of the file ensures
-# that the physical system is used.  Default setting is to follow symlinks, 
-# uncomment the following to use the physical system only.
-# set -P 
+# Enviromment.  By default the builtins 'cd' and 'pwd' follow symlinks.
+# Uncomment the following to use the physical system or comment it to use 
+# symlinks.  By default it is commented.
+# readonly no_symlinks='on'
 
 # get_realpath <file-path> : constructs an absolute path from a file, full path 
 # name or relative path name - for portability purposes - returns non-zero if
 # path is not found - should follow symlinks as this is the default behaviour
-# of the 'cd' builtin.
+# of the 'cd' and 'pwd' builtins.  See 'no_symlinks' to change this behaviour.
 function get_realpath() {
-    
-    if [[ -f "$1" ]]
-    then 
-        # file *must* exist
-        if cd "$(echo "${1%/*}")" &>/dev/null
-        then 
-            # file *may* not be local
-            # exception is ./file.ext
-            # try 'cd .; cd -;' *works!*
-            local tmppwd="$PWD"
-            cd - &>/dev/null
-        else 
-            # file *must* be local
-            local tmppwd="$PWD"
-        fi
-    else 
-        # file *cannot* exist
-        return 1 # failure
-    fi
 
-    # reassemble realpath
-    echo "$tmppwd"/"${1##*/}"
+    [[ ! -f "$1" ]] && return 1 # failure : file does not exist.
+    [[ -n "$no_symlinks" ]] && local pwdp='pwd -P' || local pwdp='pwd' # do symlinks.
+    echo "$( cd "$( echo "${1%/*}" )" 2>/dev/null; $pwdp )"/"${1##*/}" # echo result.
     return 0 # success
 
 }
@@ -131,8 +112,8 @@ function get_stemname(){
     
 }
 
-# validate_path <file-path> : validate that file path exists or exit - use exit
-# condition from 'get_realpath' to test.
+# validate_realpath <file-path> : validate that path to file exists or exit - use
+# exit condition from 'get_realpath' to test.
 function validate_path() {
 
     get_realpath "$1" &>/dev/null
