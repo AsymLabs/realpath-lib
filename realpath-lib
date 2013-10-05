@@ -17,11 +17,11 @@
 #
 #   </path/to/source.ext> an absolute path, a relative path or a local file.
 #
-#   get_realpath  </path/to/source.ext>  :  returns the file path of a file.
-#   get_dirname   </path/to/source.ext>  :  returns the directory of a file.
-#   get_filename  </path/to/source.ext>  :  returns the file name of a path.*
-#   get_stemname  </path/to/source.ext>  :  returns the stem name of a path.**
-#   validate_path </path/to/source.ext>  :  returns nothing, aborts on error.***
+#   get_realpath      </path/to/source.ext>  :  returns the file path of a file.
+#   get_dirname       </path/to/source.ext>  :  returns the directory of a file.
+#   get_filename      </path/to/source.ext>  :  returns the file name of a path.*
+#   get_stemname      </path/to/source.ext>  :  returns the stem name of a path.**
+#   validate_realpath </path/to/source.ext>  :  returns nothing, aborts on error.***
 #
 #    *the filename is the file name and extension eg. 'source.ext'.
 #   **the stemname is the file name without the extension eg. 'source'. Note
