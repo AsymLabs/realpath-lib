@@ -114,7 +114,7 @@ function get_stemname(){
 
 # validate_realpath <file-path> : validate that path to file exists or exit - use
 # exit condition from 'get_realpath' to test.
-function validate_path() {
+function validate_realpath() {
 
     get_realpath "$1" &>/dev/null
     if (( $? ))  # true when non-zero.
