@@ -61,10 +61,10 @@
 # of the 'cd' and 'pwd' builtins.  See 'no_symlinks' to change this behaviour.
 function get_realpath() {
 
-    [[ ! -f "$1" ]] && return 1 # failure : file does not exist.
-    [[ -n "$no_symlinks" ]] && local pwdp='pwd -P' || local pwdp='pwd' # do symlinks.
-    echo "$( cd "$( echo "${1%/*}" )" 2>/dev/null; $pwdp )"/"${1##*/}" # echo result.
-    return 0 # success
+    if [[ ! -f "$1" ]]; then return 1; fi # return failure (file does not exist).
+    if [[ -n "$no_symlinks" ]]; then local pwdp='pwd -P'; else local pwdp='pwd'; fi # do symlinks.
+    echo "$( cd "$( echo "${1%/*}" )" 2>/dev/null; $pwdp )"/"${1##*/}" # echo realpath.
+    return 0 # return success
 
 }
 
