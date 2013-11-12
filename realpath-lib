@@ -1,51 +1,63 @@
 #!/usr/bin/env bash
 
 # realpath-lib : realpath library for bash file path resolution and validation.
-# No external dependencies - it relies on the bash builtins 'cd' and 'echo' and 
-# a little bit of script-foo path munching.  Designed for portability.
+# No external dependencies - it relies on the bash builtins 'cd' and 'echo' and
+# a little bit of script-foo path munching. Designed for portability. Versioning
+# is according to issue date.
 #
-# Usage:    source /path/to/realpath-lib
+# Version: 2013.11.12.00
 #
-# Output:   (none)
+# Usage: source /path/to/realpath-lib
+#
+# Output: (none)
 #
 # Functions:
-#   
-#   Each of the below returns the exit status as:
 #
-#       0: success (path or file is found)
-#       1: failure (path or file is not found)
+# Each of the below returns the status conditions as:
 #
-#   </path/to/source.ext> an absolute path, a relative path or a local file.
+# 0 : Pass.
+# 1 : Fail : no file found/symlink broken/not regular file errors.
+# 2 : Fail : unspecified physical file path construction error.
+# 3 : Fail : unspecified logical or physical directory construction error.
 #
-#   get_realpath      </path/to/source.ext>  :  returns the file path of a file.
-#   get_dirname       </path/to/source.ext>  :  returns the directory of a file.
-#   get_filename      </path/to/source.ext>  :  returns the file name of a path.*
-#   get_stemname      </path/to/source.ext>  :  returns the stem name of a path.**
-#   validate_realpath </path/to/source.ext>  :  returns nothing, aborts on error.***
+# The argument to each function is:
 #
-#    *the filename is the file name and extension eg. 'source.ext'.
-#   **the stemname is the file name without the extension eg. 'source'. Note
-#     that a file name such as 'source.tar.gz' will be returned as 'source'.
-#  ***WARNING: using validate_path at shell level will kill the shell!
+# </path/to/source.ext> an absolute path, a relative path or a local file.
 #
-#   How to test return values:
+# get_realpath </path/to/source.ext> : returns the file path of a file.
+# get_dirname  </path/to/source.ext> : returns the directory of a file.
+# get_filename </path/to/source.ext> : returns the file name of a path.*
+# get_stemname </path/to/source.ext> : returns the stem name of a path.**
 #
-#       get_realpath "$1" &>/dev/null
-#       if (( $? ))  # true when non-zero.
-#       then
-#           # Do failure actions.
-#           return 1 # Failure.
-#       fi
+# The following function succeeds or exits execution.  Use with care.
 #
-# Copyright (C) Applied Numerics Ltd 2013 under the brand name AsymLabs (TM) 
-# and published under the terms of the MIT license.  Although we have not 
-# yet encountered any issues, there is no warrany of any type given so you 
-# must use it at your own risk.  You have been warned.
+# validate_realpath </path/to/source.ext> : returns nothing, exits on error.***
+#
+# *  the filename is the file name and extension eg. 'source.ext'.
+# ** the stemname is the file name without the extension eg. 'source'. Note
+#    that a file name such as 'source.tar.gz' will be returned as 'source'.
+# ***WARNING: using validate_path at shell level will kill the shell!
+#
+# How to test return values:
+#
+# get_realpath "$1" &>/dev/null
+# code=$?
+# if (( $code ))   # Non-zero.
+# then
+#     # Do failure actions.
+#     return $code # Failure.
+# fi
+# return $code     # Success. 
+#
+# Copyright (C) Applied Numerics Ltd 2013 under the brand name AsymLabs (TM)
+# and published under the terms of the MIT license. Although we have not
+# yet encountered any issues, there is no warrany of any type given so you
+# must use it at your own risk. You have been warned.
 #
 # Comments are welcomed and may be forwarded to the author at:
 #
-#           mailto:dv@angb.co
-# 
+# mailto:dv@angb.co
+#
 
 # Created by G R Summers Fri 27 Sep 2013 11:30:11 BST
 # Updated by G R Summers Sat 05 Oct 2013 06:19:30 BST
@@ -55,51 +67,49 @@
 # uncomment the following to use the physical system. Default is commented.
 # readonly no_symlinks='on'
 
-# _file "path" : print the file of a given path (private function).
+# _file "path/to/file" : print the file of a given path (private function).
 function _file(){
     printf '%s' "${1##*/}"
 }
 
-# _stem "path" : print file stem of a given path (private function).
+# _stem "path/to/file" : print file stem of a given path (private function).
 function _stem(){
     local _name="$(_file "$1")"
     printf '%s' "${_name%%.*}"
 }
 
-# _directory "path" : get the directory of a path (private function)
+# _directory "path/to/file" : get the directory of a path (private function)
 function _directory(){
     printf '%s' "${1%/*}"
 }
 
-# _cd "path" : change to the directory of a path (private function).
+# _cd "path/to/file" : change to the directory of a path (private function).
 function _cd(){
     cd "$(_directory "$1")" 2>/dev/null
 }
 
-# _get "function" "path" : common structure (private function).
-# uses get_realpath and passes exit condition.  Non-zero fails.
+# _get "function" "path/to/file" : repeated structure (private function).
+# Uses get_realpath and passes exit conditions. Non-zero fails.
 function _get(){
-
     local _path="$(get_realpath "$2")"
     local _code=$?
-    if (( $_code ))   # non-zero.
-    then  
+    if (( $_code )) # non-zero.
+    then
         return $_code # failure
     fi
-    $1 "$2"
-    return $_code     # success
-
+    $1 "$_path"
+    return $_code # success
 }
 
-# get_realpath "path/to/file" : echo the realpath as logical or physical.  There 
+# get_realpath "path/to/file" : echo the realpath as logical or physical. There
 # are four possible exit conditions, where success returns 0, these are commented
-# in the function.  This function is not pure Bash in that it relies on 'ls -dl'
+# in the function. This function is not pure Bash in that it relies on 'ls -dl'
 # but since 'ls' is posix standard it should remain portable.
 function get_realpath(){
     # 0 : Good.
     # 1 : Fail : no file found/symlink broken/not regular file errors.
     # 2 : Fail : unspecified physical file path construction error.
-    # 3 : Fail : unspecified logical or physical directory construction error. 
+    # 3 : Fail : unspecified logical or physical directory construction error.
     [[ ! -f "$1" ]] && return 1 # Error code 1.
     if [[ -z "$no_symlinks" ]]
     then
@@ -110,47 +120,39 @@ function get_realpath(){
         then
             local _ls="$( ls -dl "$1" 2>/dev/null )" &&
             local _link="$( printf '%s' "${_ls#*"${1} -> "}" )" &&
-            echo "$( _cd "$1"; _cd "$_link" && $_pwd )"/"$(_file "$_link")" && return 0 || return 2 # Error code 2.
+            echo "$( _cd "$1"; _cd "$_link" && $_pwd )"/"$(_file "$_link")" &&
+            return 0 || return 2 # Error code 2.
         fi
     fi
-    echo "$( _cd "$1"; $_pwd )"/"$(_file "$1")" && return 0 || return 3 # Error code 3.
+    echo "$( _cd "$1"; $_pwd )"/"$(_file "$1")" &&
+    return 0 || return 3 # Error code 3.
 }
 
-# get_dirname "path/to/file" : strips the source file name from a full path - for
-# portability purposes - uses get_realpath - passes exit conditions through.
+# get_dirname "path/to/file" : gets the directory name of a path to file.
 function get_dirname(){
-
     _get _directory "$1"
-    
 }
 
-# get_filename "path/to/file" : gets a file name from a file path - for portability
-# purposes - uses get_realpath - passes exit conditions through.
+# get_filename "path/to/file" : gets a file name from a path to file.
 function get_filename(){
-
-    _get _file "$1" 
-    
+    _get _file "$1"
 }
 
-# get_stemname "path/to/file" gets a stem name (removes path and extension) from 
-# a file path - for portability purposes - uses get_filename - passes exit con-
-# ditions through.
+# get_stemname "path/to/file" gets a stem name (removes directory and extension).
 function get_stemname(){
-
     _get _stem "$1"
-    
 }
 
-# validate_realpath "path/to/file" : validate that path to file exists or exit - 
-# uses the exit condition of get_realpath.
+# validate_realpath "path/to/file" : validate that path to file exists or exit.
 function validate_realpath() {
-
     get_realpath "$1" &>/dev/null
     local _code=$?
-    if (( $_code ))         # non-zero.
-    then  
+    if (( $_code )) # non-zero.
+    then
         echo "Error: '$1' not found, exiting ..."
-        exit 1              # failure.
+        exit 1 # failure.
     fi
-    return $_code           # success.
+    return $_code # success.
 }
+
+# end realpath-lib
