@@ -11,9 +11,10 @@ can resolve the full path associated with a file name.   These functions are:
 >validate_realpath  
 
 `realpath-lib` was inspired in part by realpath tools that are available in
-other programming languages.  We are not aware of a Bash specific version that
-does not require external or other platform specific dependencies.  This is pure
-Bash. It just works.
+other programming languages.  This script illustrates that path processing 
+can be done in Bash with minimal dependencies. This script requires only the 
+widely used posix standard utility **ls** to resolve symlinked file names only.
+There are no other dependencies.  It should work across Unix systems and variants.  
 
 Motivation
 ==========
@@ -23,32 +24,29 @@ and Windows has revealed that certain system/Bash tools are not available for
 all platforms.  Quite often the standard way of resolving file names, such as
 the use of *basename*, *readlink* or others has led to portability problems.  
   
-For this reason we have prepared this set of tools for use in Bash scripts.  It
-uses only simple built-in features and should not require anything else.   
+For this reason we have prepared this set of tools for use in Bash scripts with
+only simple built-in features and one widely available posix standard utility **ls**.   
 
 Dependencies
 ============
 
-Bash 4+ and nothing else.  This could be revised to work with earlier versions
-but we leave this as an exercise for others.  
+Bash 4+, posix standard **ls** and nothing else.  This could be revised to work 
+with earlier Bash versions but we leave this as an exercise for others.  
 
 Features
 ========
 
 The path argument can be provided as a local file name, relative path or an
-absolute path.  It should permit symlinks by default but we have not yet verified
-this across platforms.  Functions are classified into two groups: getters and
-validators.  
-  
-You can also make the script avoid symlinks (use the physical system only) by
-altering the environment settings.  
+absolute path.  It permits symlinks (logical locations) by default but this
+behaviour can be changed when invoked or globally.  Interface methods are 
+classified into two groups: getters and validators.  
 
 Getters
 -------
 
 The following functions will resolve the path argument to a full absolute path
-string (if it is found) and return an exit condition of **0 for success** and 
-**1 for failure** - meaning they can be used for testing purposes too.  
+string (if it exists) and return exit conditions **0 for success** and 
+**1, 2 or 3 for failure** - meaning they can be used for testing purposes too.  
   
 >get_realpath 'path-arg'  
 >get_dirname 'path-arg'  
@@ -77,10 +75,13 @@ script with:
 
     source '/your/path/to/realpath-lib'
 
-To avoid symlinks completely (use the physical system), uncomment `no_symlinks`
-under 'Environment' (near the beginning of the script).
+To avoid symlinks completely (use the physical system), uncomment `no_symlinks=on`
+under 'Environment' (near the beginning of the script), or invoke when called as:
 
-That's it.
+    no_symlinks='on' get_realpath 'path-arg'
+    no_symlinks='on' get_stemname 'path-arg'
+
+and so on.
   
 Examples
 ========
