@@ -5,11 +5,11 @@
 # a little bit of script-foo path munching. Designed for portability. Versioning
 # is according to issue date.
 #
-# Version: 2013.11.12.00
+# Version : 2013.11.12.01
 #
-# Usage: source /path/to/realpath-lib
+# Usage   : source /path/to/realpath-lib
 #
-# Output: (none)
+# Output  : (none)
 #
 # Functions:
 #
@@ -57,15 +57,18 @@
 # Comments are welcomed and may be forwarded to the author at:
 #
 # mailto:dv@angb.co
-#
 
 # Created by G R Summers Fri 27 Sep 2013 11:30:11 BST
 # Updated by G R Summers Sat 05 Oct 2013 06:19:30 BST
 # Updated by G R Summers Tue 12 Nov 2013 15:17:38 GMT
 
+#### ENVIRONMENT SETTINGS ####
+
 # Enviromment. By default the logical file system will be used. Otherwise
 # uncomment the following to use the physical system. Default is commented.
 # readonly no_symlinks='on'
+
+#### PRIVATE HELPER METHODS ####
 
 # _file "path/to/file" : print the file of a given path (private function).
 function _file(){
@@ -89,7 +92,7 @@ function _cd(){
 }
 
 # _get "function" "path/to/file" : repeated structure (private function).
-# Uses get_realpath and passes exit conditions. Non-zero fails.
+# Uses get_realpath and passes exit conditions on. Non-zero exit fails.
 function _get(){
     local _path="$(get_realpath "$2")"
     local _code=$?
@@ -100,6 +103,55 @@ function _get(){
     $1 "$_path"
     return $_code # success
 }
+
+#### PUBLIC INTERFACE METHODS ####
+
+# get_dirname "path/to/file" : gets the directory name of a path to file.
+function get_dirname(){
+    _get _directory "$1"
+}
+
+# get_filename "path/to/file" : gets a file name from a path to file.
+function get_filename(){
+    _get _file "$1"
+}
+
+# get_stemname "path/to/file" : gets a stem name (removes directory and extension).
+function get_stemname(){
+    _get _stem "$1"
+}
+
+# validate_realpath "path/to/file" : validate that path to file exists or exit.
+function validate_realpath() {
+    get_realpath "$1" &>/dev/null
+    local _code=$?
+    local _messg='Unspecified/unknown failure condition'
+    case $_code in
+    0)
+            # success
+	        return $_code
+	;;
+	1)
+            # failure
+            _messg='No file, special type or broken symlink'
+	;;
+	2)
+            # failure
+            _messg='Physical path to file resolution issues'
+	;;
+	3)
+            # failure
+            _messg='Logical or physical directory issues'
+	;;
+	*)
+            # failure but do nothing.
+	;;
+    esac
+    echo "Error [$_code] : $_messg, exiting..."
+    exit 1
+}
+
+#### GET_REALPATH ####
 
 # get_realpath "path/to/file" : echo the realpath as logical or physical. There
 # are four possible exit conditions, where success returns 0, these are commented
@@ -126,33 +178,6 @@ function get_realpath(){
     fi
     echo "$( _cd "$1"; $_pwd )"/"$(_file "$1")" &&
     return 0 || return 3 # Error code 3.
-}
-
-# get_dirname "path/to/file" : gets the directory name of a path to file.
-function get_dirname(){
-    _get _directory "$1"
-}
-
-# get_filename "path/to/file" : gets a file name from a path to file.
-function get_filename(){
-    _get _file "$1"
-}
-
-# get_stemname "path/to/file" gets a stem name (removes directory and extension).
-function get_stemname(){
-    _get _stem "$1"
-}
-
-# validate_realpath "path/to/file" : validate that path to file exists or exit.
-function validate_realpath() {
-    get_realpath "$1" &>/dev/null
-    local _code=$?
-    if (( $_code )) # non-zero.
-    then
-        echo "Error: '$1' not found, exiting ..."
-        exit 1 # failure.
-    fi
-    return $_code # success.
 }
 
 # end realpath-lib
