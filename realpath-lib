@@ -183,8 +183,8 @@ function validate_realpath() {
 
 #### GET_REALPATH ####
 
-# get_realpath "path/to/file" : echo the realpath as logical or physical. There
-# are four possible exit conditions, where success returns 0, these are commented
+# get_realpath "path/to/file" : print the full logical or physical path. There
+# are four possible exit conditions, where success returns 0, see the comments
 # in the function. This function is not pure Bash in that it relies on 'ls -dl'
 # but since 'ls' is posix standard it should remain portable.
 function get_realpath(){
