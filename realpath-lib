@@ -47,7 +47,7 @@
 # 0 : Pass.
 # 1 : Fail : no file/special file/broken symlink error.
 # 2 : Fail : physical path to file resolution issues.
-# 3 : Fail : logical or physical directory from path issues.
+# 3 : Fail : logical or physical directory issues.
 #
 # Interface Methods
 # -----------------
@@ -191,7 +191,7 @@ function get_realpath(){
     # 0 : Pass.
     # 1 : Fail : no file/special file/broken symlink error.
     # 2 : Fail : physical path to file resolution issues.
-    # 3 : Fail : logical or physical directory from path issues.
+    # 3 : Fail : logical or physical directory issues.
     [[ ! -f "$1" ]] && return 1 # Error code 1.
     if [[ -z "$no_symlinks" ]]
     then
