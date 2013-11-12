@@ -12,7 +12,7 @@
 # and better cross-platform compatability than 'readlink'.  Versioning is done
 # according to issue date.
 #
-# Version : 2013.11.12.02
+# Version : 2013.11.12.03
 # Usage   : source /path/to/realpath-lib
 # Output  : (none)
 #
