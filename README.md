@@ -1,7 +1,7 @@
 realpath-lib
 ============
 
-The lightweight and simple Bash library `realpath-lib` provides functions that
+The lightweight and simple Bash library **realpath-lib** provides functions that
 can resolve the full path associated with a file name.   These functions are:  
 
 >get_realpath  
@@ -10,7 +10,7 @@ can resolve the full path associated with a file name.   These functions are:
 >get_stemname  
 >validate_realpath  
 
-`realpath-lib` was inspired in part by realpath tools that are available in
+**realpath-lib** was inspired in part by realpath tools that are available in
 other programming languages.  This script illustrates that path processing 
 can be done in Bash with minimal dependencies. This script requires only the 
 widely used posix standard utility **ls** to resolve symlinked file names only.
@@ -60,7 +60,7 @@ Validators
 
 The function `validate_realpath` will return an exit condition of **0 for success**
 or will **abort on failure**.  This leads us to the following warning: **do not
-use validate_realpath at the top level of your shell - as a failure to validate
+use `validate_realpath` at the top level of your shell - as a failure to validate
 will kill the shell and any sub-processes!**  
   
 >validate_realpath 'path-arg'  
