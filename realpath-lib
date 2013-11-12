@@ -189,9 +189,9 @@ function validate_realpath() {
 # but since 'ls' is posix standard it should remain portable.
 function get_realpath(){
     # 0 : Pass.
-    # 1 : Fail : no file found/symlink broken/not regular file errors.
-    # 2 : Fail : unspecified physical file path construction error.
-    # 3 : Fail : unspecified logical or physical directory construction error.
+    # 1 : Fail : no file/special file/broken symlink error.
+    # 2 : Fail : physical path to file resolution issues.
+    # 3 : Fail : logical or physical directory from path issues.
     [[ ! -f "$1" ]] && return 1 # Error code 1.
     if [[ -z "$no_symlinks" ]]
     then
