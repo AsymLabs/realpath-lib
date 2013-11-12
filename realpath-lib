@@ -49,78 +49,108 @@
 
 # Created by G R Summers Fri 27 Sep 2013 11:30:11 BST
 # Updated by G R Summers Sat 05 Oct 2013 06:19:30 BST
+# Updated by G R Summers Tue 12 Nov 2013 15:17:38 GMT
 
-# Enviromment.  By default the builtins 'cd' and 'pwd' follow symlinks.
-# Uncomment the following to use the physical system or comment it to use 
-# symlinks.  By default it is commented.
+# Enviromment. By default the logical file system will be used. Otherwise
+# uncomment the following to use the physical system. Default is commented.
 # readonly no_symlinks='on'
 
-# get_realpath <file-path> : constructs an absolute path from a file, full path 
-# name or relative path name - for portability purposes - returns non-zero if
-# path is not found - should follow symlinks as this is the default behaviour
-# of the 'cd' and 'pwd' builtins.  See 'no_symlinks' to change this behaviour.
-function get_realpath() {
+# _file "path" : print the file of a given path (private function).
+function _file(){
+    printf '%s' "${1##*/}"
+}
 
-    if [[ ! -f "$1" ]]; then return 1; fi # return failure (file does not exist).
-    if [[ -n "$no_symlinks" ]]; then local pwdp='pwd -P'; else local pwdp='pwd'; fi # do symlinks.
-    echo "$( cd "$( echo "${1%/*}" )" 2>/dev/null; $pwdp )"/"${1##*/}" # echo realpath.
-    return 0 # return success
+# _stem "path" : print file stem of a given path (private function).
+function _stem(){
+    local _name="$(_file "$1")"
+    printf '%s' "${_name%%.*}"
+}
+
+# _directory "path" : get the directory of a path (private function)
+function _directory(){
+    printf '%s' "${1%/*}"
+}
+
+# _cd "path" : change to the directory of a path (private function).
+function _cd(){
+    cd "$(_directory "$1")" 2>/dev/null
+}
+
+# _get "function" "path" : common structure (private function).
+# uses get_realpath and passes exit condition.  Non-zero fails.
+function _get(){
+
+    local _path="$(get_realpath "$2")"
+    local _code=$?
+    if (( $_code ))   # non-zero.
+    then  
+        return $_code # failure
+    fi
+    $1 "$2"
+    return $_code     # success
 
 }
 
-# get_dirname <file-path> : strips the source file name from a full path - for
-# portability purposes - uses get_realpath - returns non-zero if directory is
-# not found.
+# get_realpath "path/to/file" : echo the realpath as logical or physical.  There 
+# are four possible exit conditions, where success returns 0, these are commented
+# in the function.  This function is not pure Bash in that it relies on 'ls -dl'
+# but since 'ls' is posix standard it should remain portable.
+function get_realpath(){
+    # 0 : Good.
+    # 1 : Fail : no file found/symlink broken/not regular file errors.
+    # 2 : Fail : unspecified physical file path construction error.
+    # 3 : Fail : unspecified logical or physical directory construction error. 
+    [[ ! -f "$1" ]] && return 1 # Error code 1.
+    if [[ -z "$no_symlinks" ]]
+    then
+        local _pwd='pwd'
+    else
+        local _pwd='pwd -P'
+        if [[ -L "$1" ]]
+        then
+            local _ls="$( ls -dl "$1" 2>/dev/null )" &&
+            local _link="$( printf '%s' "${_ls#*"${1} -> "}" )" &&
+            echo "$( _cd "$1"; _cd "$_link" && $_pwd )"/"$(_file "$_link")" && return 0 || return 2 # Error code 2.
+        fi
+    fi
+    echo "$( _cd "$1"; $_pwd )"/"$(_file "$1")" && return 0 || return 3 # Error code 3.
+}
+
+# get_dirname "path/to/file" : strips the source file name from a full path - for
+# portability purposes - uses get_realpath - passes exit conditions through.
 function get_dirname(){
 
-    local realpath="$(get_realpath "$1")"
-    if (( $? ))  # true when non-zero.
-    then  
-        return $? # failure
-    fi
-    echo "${realpath%/*}"
-    return 0 # success
+    _get _directory "$1"
     
 }
 
-# get_filename <file-path> : gets a file name from a file path - for portability
-# purposes - uses get_realpath - returns non-zero if filename is not found.
+# get_filename "path/to/file" : gets a file name from a file path - for portability
+# purposes - uses get_realpath - passes exit conditions through.
 function get_filename(){
 
-    local realpath="$(get_realpath "$1")"
-    if (( $? ))  # true when non-zero.
-    then  
-        return $? # failure
-    fi
-    echo "${realpath##*/}"
-    return 0 # success
+    _get _file "$1" 
     
 }
 
-# get_stemname <file-path> gets a stem name (removes path and extension) from 
-# a file path - for portability purposes - uses get_filename - returns non-zero
-# stemname cannot be made.
+# get_stemname "path/to/file" gets a stem name (removes path and extension) from 
+# a file path - for portability purposes - uses get_filename - passes exit con-
+# ditions through.
 function get_stemname(){
 
-    local filename="$(get_filename "$1")"
-    if (( $? ))  # true when non-zero.
-    then  
-        return $? # failure
-    fi
-    echo "${filename%%.*}"
-    return 0 # success
+    _get _stem "$1"
     
 }
 
-# validate_realpath <file-path> : validate that path to file exists or exit - use
-# exit condition from 'get_realpath' to test.
+# validate_realpath "path/to/file" : validate that path to file exists or exit - 
+# uses the exit condition of get_realpath.
 function validate_realpath() {
 
     get_realpath "$1" &>/dev/null
-    if (( $? ))  # true when non-zero.
+    local _code=$?
+    if (( $_code ))         # non-zero.
     then  
-        echo "Something is wrong, '$1' not found, exiting ..."
-        exit 1 # exit error
+        echo "Error: '$1' not found, exiting ..."
+        exit 1              # failure.
     fi
-    
+    return $_code           # success.
 }
