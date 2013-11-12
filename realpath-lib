@@ -106,7 +106,7 @@ function _get(){
 # in the function. This function is not pure Bash in that it relies on 'ls -dl'
 # but since 'ls' is posix standard it should remain portable.
 function get_realpath(){
-    # 0 : Good.
+    # 0 : Pass.
     # 1 : Fail : no file found/symlink broken/not regular file errors.
     # 2 : Fail : unspecified physical file path construction error.
     # 3 : Fail : unspecified logical or physical directory construction error.
