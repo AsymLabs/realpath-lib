@@ -2,7 +2,11 @@ realpath-lib
 ============
 
 The lightweight and simple Bash library **realpath-lib** provides functions that
-can resolve the full path associated with a file name.   These functions are:  
+can resolve the full path associated with symlinks and file names.  There are a 
+number of environment setttings but by default the function `get_realpath` will
+emulate the popular, but often not available, command utility `readlink -f`.  
+  
+Core functions are:  
 
 >get_realpath  
 >get_dirname  
@@ -13,8 +17,9 @@ can resolve the full path associated with a file name.   These functions are:
 **realpath-lib** was inspired in part by realpath tools that are available in
 other programming languages.  This script illustrates that path processing 
 can be done in Bash with minimal dependencies. This script requires only the 
-widely used posix standard utility **ls** to resolve symlinked file names only.
-There are no other dependencies.  It should work across Unix systems and variants.  
+widely used Posix&reg; compliant standard utility **ls** to resolve symlinked
+file names only.  There are no other dependencies.  It should work across most
+if not all Unix systems and variants.  
 
 Motivation
 ==========
@@ -22,16 +27,39 @@ Motivation
 Recent work writing scripts that should function the same way across Mac, Linux
 and Windows has revealed that certain system/Bash tools are not available for
 all platforms.  Quite often the standard way of resolving file names, such as
-the use of *basename*, *readlink* or others has led to portability problems.  
+the use of *readlink*, *basename*, *dirname* or others has led to portability
+issues.  
   
 For this reason we have prepared this set of tools for use in Bash scripts with
-only simple built-in features and one widely available posix standard utility **ls**.   
+only simple built-in features and one widely available Posix&reg; standard utility
+**ls**.   
 
 Dependencies
 ============
 
-Bash 4+, posix standard **ls** and nothing else.  This could be revised to work 
-with earlier Bash versions but we leave this as an exercise for others.  
+Dependencies are Bash 4+, Posix&reg; standard **ls** and nothing else.  This could
+be revised to work with earlier Bash versions but we leave this as an exercise for
+others.  
+
+Test Scripts
+============
+
+Two test scripts have been added that were developed following an issue
+thread of November 2013: https://github.com/AsymLabs/realpath-lib/issues/1 .  
+  
+The scripts are: 1) **make-generic-test.sh** and 2) **make-readlink-test.sh**.
+The **generic** test script can be used to test the script on a specific system,
+whereas the **readlink** script can be used to assess the library against the 
+**readlink** command if it is available on your system.  The scripts can also 
+be used to gain a better understanding of realpath-lib.  
+  
+As part of test, a directory and subdirectories are created that are traversed
+in order to test such things as chained symlinks, symlinks of circular 
+reference, broken symlinks, non-existent symlinks or files and others.  
+  
+Both scripts will produce a uniquely stamped test log and error log.  These can
+be used for diagnostic purposes on any given system.  The logs can also be 
+supplied to us should you have problems using **realpath-lib** on your system.  
 
 Features
 ========
@@ -40,6 +68,9 @@ The path argument can be provided as a local file name, relative path or an
 absolute path.  It permits symlinks (logical locations) by default but this
 behaviour can be changed when invoked or globally.  Interface methods are 
 classified into two groups: getters and validators.  
+
+There are a number of environment settings that are identified in detail 
+within the library.
 
 Getters
 -------
@@ -67,6 +98,34 @@ will kill the shell and any sub-processes!**
 >  
 >where **path-arg** is the same as above.  
 
+Environment
+-----------
+
+There are three settable environments (default values are shown):  
+
+>set_strict=  
+>set_logical=  
+>set_max_depth=5  
+  
+As indicated previously, the default (out of the box) settings are done to emulate
+the command **readlink -f**.  Another interesting feature of the default settings
+is that the chain of symlinks for a given path can be unwound where an error is
+thrown - useful for diagnostic purposes.  Capture stderr to view this information.
+The test scripts are illustrative.  
+  
+set_strict : setting this environment enforces strict checking of target paths.  They
+must exist, the symlink target must exist, cannot be broken and the ultimate target
+must be a regular file.
+
+set_logical : setting this environment will see that symlinked files will not be 
+resolved to the physical system.  This is at odds with the command **readlink**.  
+  
+set_max_depth : setting this environment controls the depth of symlink recursion.
+Recursion exits on three conditions: 1) when a duplicate reference occcurs (as a
+circular reference), 2) when the set_max_depth is reached, or 3) when the built-in
+internal limit (40) is reached, whichever occurs first.  So if the set_max_depth
+is set to greater than 40, it will be disregarded.  
+
 Usage
 =====
 
@@ -75,13 +134,14 @@ script with:
 
     source '/your/path/to/realpath-lib'
 
-To avoid symlinks completely (use the physical system), uncomment `no_symlinks=on`
-under 'Environment' (near the beginning of the script), or invoke when called as:
+As indicated previoulsy, the default setting is to emulate the command utility 
+**readlink -f**. Environment settings can be incorporated within your script or
+inline as:
 
-    no_symlinks='on' get_realpath 'path-arg'
-    no_symlinks='on' get_stemname 'path-arg'
+    set_strict=true set_logical=true set_max_depth=20 get_realpath 'path-arg'
+    set_strict=     set_logical=true set_max_depth=10 get_stemname 'path-arg'
 
-and so on.
+and so on.  
   
 Examples
 ========
