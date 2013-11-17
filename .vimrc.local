@@ -1,0 +1,18 @@
+" .vimrc.local  - contains settings for editing shell/bash source.
+" Created on Sat Nov 16 22:10:37 GMT 2013
+" usage:  source .vimrc.local
+
+" code - autodetect type
+set tabstop=4
+filetype indent on
+set expandtab
+retab!
+
+" general settings.
+" set spell
+
+" appearance
+set t_Co=256
+colorscheme jellybeans
+set guifont=Monaco:h14
+
