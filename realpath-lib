@@ -68,12 +68,13 @@
 # Updated by G R Summers Tue 13 Nov 2013 17:04:14 GMT
 # Updated by G R Summers Fri 15 Nov 2013 10:58:48 GMT
 # Updated by G R Summers Sun 17 Nov 2013 11:33:36 GMT
+# Updated by G R Summers Mon 18 Nov 2013 21:25:55 GMT
 
 #### DO NOT ALTER THESE SETTINGS!
 
 # RPL_VERSION.  This is used for testing and identification purposes and should 
 # not be altered.
-readonly RPL_VERSION='2013.11.18.00'
+readonly RPL_VERSION='2013.11.18.01'
 
 # RPL_SYMLINK_LIMIT.  This is the symlink recusion limit that overrides the 
 # custom environment setting of $set_max_depth that follows and should
@@ -156,6 +157,19 @@ readonly _exit_solutions=(
     "Enable 'set_logical=true' or install Posix utility 'ls'"
     'Cannot provide solution for unspecified or unknown errors'
 )
+
+# _unroll array : unroll an array passed by reference, in this case the history
+# of links.
+function _unroll(){
+    local _el                # element.
+    local _cntr=0            # counter.
+    local _array=$1[@]       # array by ref.
+    for _el in ${!_array}    # unroll array.
+    do
+        printf 'L [%02d] -> %s\n' "$_cntr" "$_el" 1>&2
+        (( _cntr++ ))
+    done
+}
 
 # _log_error code [fatal] : log according to return value (private function).
 # use optional argument 'fatal' to exit execution - send to stderr. 
@@ -310,14 +324,9 @@ function get_realpath(){
                 (( $_cntr )) && {                      # min two elements.
                     for _el in ${_paths[@]}
                     do
-                        [[ "$_el" == "$_path" ]] && {  # test for duplicate.
+                        [[ "$_el" == "$_path" ]] && {  # find duplicate.
                             _paths[$_cntr]="$_path"    # insert duplicate.
-                            _cntr=0                    # reset counter
-                            for _el in ${_paths[@]}    # unroll chain.
-                            do
-                                printf 'L [%02d] -> %s\n' "$_cntr" "$_el" 1>&2
-                                (( _cntr++ ))
-                            done
+                            _unroll _paths             # unroll paths.
                             _log_error 6               # emit error 6.
                             return 6                   # throw status 6.
                         }
@@ -332,14 +341,16 @@ function get_realpath(){
 
                 # Enforce user specified maximum recursion $set_max_depth or 
                 # throw.
-                (( $_cntr == $set_max_depth )) && { 
+                (( $_cntr == $set_max_depth )) && {
+                    _unroll _paths                     # unroll paths.
                     _log_error 4                       # emit error 4.
                     return 4                           # throw status 4.
                 }
 
                 # Enforce built-in depth limit $RPL_SYMLINK_LIMIT - overrides 
                 # custom environment set_max_depth and throws.
-                (( $_cntr == $RPL_SYMLINK_LIMIT )) && { 
+                (( $_cntr == $RPL_SYMLINK_LIMIT )) && {
+                    _unroll _paths                     # unroll paths.
                     _log_error 5                       # emit error 5.
                     return 5                           # throw status 5.
                 }
