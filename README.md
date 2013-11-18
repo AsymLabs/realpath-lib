@@ -152,9 +152,9 @@ for this found in the source code files.  It can also be examinied by the
 command **tree foo** after running the script.
   
 Both scripts will produce a uniquely stamped test log and error log that will be
-displayed on terinal upon completion.  These can be used for diagnostic purposes
-on any given Bash system.  The logs can also be supplied to us should you have
-problems using **realpath-lib** on your system.  
+displayed upon completion.  These can be used for diagnostic purposes on any
+given Bash system.  The logs can be supplied to us should you have problems
+using **realpath-lib** on your system.  
 
 The following is an excerpt from the test output (stdout) of **make-generic-test.sh**:  
 
