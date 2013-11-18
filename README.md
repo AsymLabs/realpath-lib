@@ -41,16 +41,16 @@ Features
 
 There are number of beneficial features:  
 
-* Bash 4+ and only one dependency, the Posix&reg; standard *ls*!  
+* **Bash 4+** and only one dependency, the Posix&reg; standard **ls**!  
 * Almost complete portability across Unix systems, Mac (and Windows?)!   
-* Emulation of *readlink -f* (without readlink!) out of the box!  
+* Emulation of **readlink -f** (without readlink!) by default!  
 * Diagnostic investigation of symlinks, circular references, and chains!  
-* A strict environment, ensuring targets are regular, not broken and exist!  
-* A logical environment, for efficient determination of absolute paths!  
+* **set_strict**, ensuring targets are regular, not broken and exist!  
+* **set_logical**, for efficient determination of logical absolute paths!  
 * Test scripts to assess platform compatabiity and readlink emulation!  
 * Robust design approach with minimal side effects and exceptions thrown!  
 * Compact, efficient source that is well commented and easy to maintain!  
-* Free and open source, under the liberal terms of the MIT license!  
+* Free and open source, under the liberal terms of the **MIT license**!  
   
 The path argument can be provided as a local file name, relative path or an
 absolute path.  It permits symlinks to be resolved by default by emulating
