@@ -126,11 +126,11 @@ As indicated previoulsy, the default setting is to emulate the command utility
 **readlink -f**. Environment settings can be incorporated within your script or
 inline as:
 
-    get_realpath 'path-arg' # emulate readlink -f, traverse a link chain of 5                                 
-    set_strict=true set_logical=true set_max_depth=20 get_realpath 'path-arg'
-    set_strict=     set_logical=true set_max_depth=10 get_stemname 'path-arg'
+    get_realpath 'path-arg' # emulate readlink -f, traverse a link chain of 5  
+    set_strict=true set_logical=true set_max_depth=20 get_realpath 'path-arg'  
+    set_strict=     set_logical=true set_max_depth=10 get_stemname 'path-arg'  
 
-and so on.
+and so on.  
   
 Test Scripts
 ============
@@ -247,7 +247,6 @@ examples are:
     [user@host Templates]$ validate_realpath '../MyLib/archive.tar.gz'  
     [user@host Templates]$  
   
-
 Design
 ======
 
