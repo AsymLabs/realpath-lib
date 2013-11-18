@@ -57,7 +57,7 @@ absolute path.  It permits symlinks to be resolved by default by emulating
 **readlink -f**.  Interface methods are classified into two groups: getters
 and validators.  
 
-There are a number of environments that are summarized under the a section 
+There are a number of environments that are summarized under the section 
 that follows.  These are also explained in detail in the source code file.  
 
 Getters
