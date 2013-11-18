@@ -19,7 +19,7 @@ other programming languages.  This script illustrates that path processing
 can be done in Bash with minimal dependencies. This script requires only the 
 widely used Posix&reg; compliant standard utility **ls** to resolve symlinked
 file names only.  
-  
+   
 Although we have not tested this script widely, it should work across most, if
 not all, Unix systems and variants.  
 
@@ -36,20 +36,22 @@ For this reason we have prepared this set of tools for use in Bash scripts with
 only simple built-in features and one widely available Posix&reg; standard utility
 **ls**.  
 
-Dependencies
-============
-
-Dependencies are Bash 4+, Posix&reg; standard **ls** and nothing else.  This could
-be revised to work with earlier Bash versions but we leave this as an exercise for
-others.  
-  
-Where the dependency is required, being for linked files only (but not linked 
-directories), the script will throw a non-zero status and exit with a message
-to stderr if **ls** cannot be found.  
-
 Features
 ========
 
+There are number of beneficial features:  
+
+* Bash 4+ and only one dependency, the Posix&reg; standard *ls*!  
+* Almost complete portability across Unix systems, Mac (and Windows?)!   
+* Emulation of *readlink -f* (without readlink!) out of the box!  
+* Diagnostic investigation of symlinks, circular references, and chains!  
+* A strict environment, ensuring targets are regular, not broken and exist!  
+* A logical environment, for efficient determination of absolute paths!  
+* Test scripts to assess platform compatabiity and readlink emulation!  
+* Robust design approach with minimal side effects and exceptions thrown!  
+* Compact, efficient source that is well commented and easy to maintain!  
+* Free and open source, under the liberal terms of the MIT license!  
+  
 The path argument can be provided as a local file name, relative path or an
 absolute path.  It permits symlinks to be resolved by default by emulating
 **readlink -f**.  Interface methods are classified into two groups: getters
@@ -112,7 +114,7 @@ deep symlink chains exist.
 resolved to the physical system.  This is at odds with the command **readlink -f**.  
   
 Note that the environment **set_max_depth** is not used nor will symlink chains
-be assessed when **set_logical** is envoked.
+be assessed when **set_logical** is invoked.
   
 **set_max_depth**: setting this environment controls the depth of symlink recursion.
 Recursion exits on three conditions: 1) when a duplicate reference occcurs (as a
@@ -120,6 +122,17 @@ circular reference), 2) when the set_max_depth is reached, or 3) when the built-
 internal limit (40) is reached, whichever occurs first.  So if the set_max_depth
 is set to greater than 40, it will be disregarded, and 40 shall be enforced.  Of
 course this limit can be changed, but will require modification of the source.
+  
+Dependencies
+------------
+  
+Dependencies are Bash 4+, Posix&reg; standard **ls** and nothing else. This
+could be refactored to work with earlier Bash versions but we leave this as 
+an exercise for others.  
+  
+Where the dependency is required ( only for linked files, not for linked 
+directories), the script will throw a non-zero status and exit with a message
+to stderr if **ls** cannot be found.  
   
 Usage
 =====
@@ -129,7 +142,7 @@ script with:
 
     source '/your/path/to/realpath-lib'
 
-As indicated previoulsy, the default setting is to emulate the command utility 
+As indicated previously, the default setting is to emulate the command utility 
 **readlink -f**. Environment settings can be incorporated within your script or
 inline as:
 
@@ -155,7 +168,7 @@ be used to gain a better understanding of realpath-lib.
 As part of tests, a directory and subdirectories are created that are traversed
 in order to test such things as chained symlinks, symlinks of circular 
 reference, broken symlinks, non-existent symlinks or files and others. A tree
-for this found in the source code files.  It can also be examinied by the 
+for this found in the source code files.  It can also be examined by the 
 command **tree foo** after running the script.
   
 Both scripts will produce a uniquely stamped test log and error log that will be
