@@ -2,8 +2,8 @@ realpath-lib
 ============
 
 The lightweight and simple Bash library **realpath-lib** provides functions that
-can resolve the full path associated with symlinks and file names.  There are a 
-number of environment setttings but by default the function `get_realpath` will
+can resolve the full path associated with symlinks and file names.  There are 
+several environments available but by default the function `get_realpath` will
 emulate the popular, but often not available, command utility `readlink -f`.  
   
 Core functions are:  
@@ -18,21 +18,23 @@ Core functions are:
 other programming languages.  This script illustrates that path processing 
 can be done in Bash with minimal dependencies. This script requires only the 
 widely used Posix&reg; compliant standard utility **ls** to resolve symlinked
-file names only.  There are no other dependencies.  It should work across most
-if not all Unix systems and variants.  
+file names only.  
+  
+Although we have not tested this script widely, it should work across most, if
+not all, Unix systems and variants.  
 
 Motivation
 ==========
 
 Recent work writing scripts that should function the same way across Mac, Linux
 and Windows has revealed that certain system/Bash tools are not available for
-all platforms.  Quite often the standard way of resolving file names, such as
-the use of *readlink*, *basename*, *dirname* or others has led to portability
-issues.  
+all platforms. Quite often the recommended way of resolving file names is to use
+utilities such as *readlink*, *basename*, *dirname* or perhaps others that have 
+often led to portability issues.  
   
 For this reason we have prepared this set of tools for use in Bash scripts with
 only simple built-in features and one widely available Posix&reg; standard utility
-**ls**.   
+**ls**.  
 
 Dependencies
 ============
@@ -40,63 +42,48 @@ Dependencies
 Dependencies are Bash 4+, Posix&reg; standard **ls** and nothing else.  This could
 be revised to work with earlier Bash versions but we leave this as an exercise for
 others.  
-
-Test Scripts
-============
-
-Two test scripts have been added that were developed following an issue
-thread of November 2013: https://github.com/AsymLabs/realpath-lib/issues/1 .  
   
-The scripts are: 1) **make-generic-test.sh** and 2) **make-readlink-test.sh**.
-The **generic** test script can be used to test the script on a specific system,
-whereas the **readlink** script can be used to assess the library against the 
-**readlink** command if it is available on your system.  The scripts can also 
-be used to gain a better understanding of realpath-lib.  
-  
-As part of test, a directory and subdirectories are created that are traversed
-in order to test such things as chained symlinks, symlinks of circular 
-reference, broken symlinks, non-existent symlinks or files and others.  
-  
-Both scripts will produce a uniquely stamped test log and error log.  These can
-be used for diagnostic purposes on any given system.  The logs can also be 
-supplied to us should you have problems using **realpath-lib** on your system.  
+Where the dependency is required, being for linked files only (but not linked 
+directories), the script will throw a non-zero status and exit with a message
+to stderr if **ls** cannot be found.  
 
 Features
 ========
 
 The path argument can be provided as a local file name, relative path or an
-absolute path.  It permits symlinks (logical locations) by default but this
-behaviour can be changed when invoked or globally.  Interface methods are 
-classified into two groups: getters and validators.  
+absolute path.  It permits symlinks to be resolved by default by emulating
+**readlink -f**.  Interface methods are classified into two groups: getters
+and validators.  
 
-There are a number of environment settings that are identified in detail 
-within the library.
+There are a number of environments that are summarized under the a section 
+that follows.  These are also explained in detail in the source code file.  
 
 Getters
 -------
 
 The following functions will resolve the path argument to a full absolute path
-string (if it exists) and return exit conditions **0 for success** and 
-**1, 2 or 3 for failure** - meaning they can be used for testing purposes too.  
+string (if it exists) and throw a status condition of **0 for success** or
+**1 to 7 for failure** - meaning they can be used for testing purposes too.  
   
 >get_realpath 'path-arg'  
 >get_dirname 'path-arg'  
 >get_filename 'path-arg'  
 >get_stemname 'path-arg'  
 >  
->where **path-arg** can be a local file, a relative path or absolute path.   
-
+  
+where **path-arg** can be a local file, a relative path or absolute path.   
+  
 Validators
 ----------
 
-The function `validate_realpath` will return an exit condition of **0 for success**
+The function `validate_realpath` will throw a status condition of **0 for success**
 or will **abort on failure**.  This leads us to the following warning: **do not
 use `validate_realpath` at the top level of your shell - as a failure to validate
 will kill the shell and any sub-processes!**  
   
 >validate_realpath 'path-arg'  
->  
->where **path-arg** is the same as above.  
+   
+where **path-arg** is the same as above.  
 
 Environment
 -----------
@@ -113,14 +100,14 @@ is that the chain of symlinks for a given path can be unwound where an error is
 thrown - useful for diagnostic purposes.  Capture stderr to view this information.
 The test scripts are illustrative.  
   
-set_strict : setting this environment enforces strict checking of target paths.  They
+**set_strict**: setting this environment enforces strict checking of target paths.  They
 must exist, the symlink target must exist, cannot be broken and the ultimate target
 must be a regular file.
 
-set_logical : setting this environment will see that symlinked files will not be 
+**set_logical**: setting this environment will see that symlinked files will not be 
 resolved to the physical system.  This is at odds with the command **readlink**.  
   
-set_max_depth : setting this environment controls the depth of symlink recursion.
+**set_max_depth**: setting this environment controls the depth of symlink recursion.
 Recursion exits on three conditions: 1) when a duplicate reference occcurs (as a
 circular reference), 2) when the set_max_depth is reached, or 3) when the built-in
 internal limit (40) is reached, whichever occurs first.  So if the set_max_depth
@@ -138,11 +125,73 @@ As indicated previoulsy, the default setting is to emulate the command utility
 **readlink -f**. Environment settings can be incorporated within your script or
 inline as:
 
+    get_realpath 'path-arg' # emulate readlink -f, traverse a link chain of 5                                 
     set_strict=true set_logical=true set_max_depth=20 get_realpath 'path-arg'
     set_strict=     set_logical=true set_max_depth=10 get_stemname 'path-arg'
 
-and so on.  
+and so on.
   
+Test Scripts
+============
+  
+Two test scripts have been added that were developed following an issue
+thread of November 2013 that can be found 
+[here](https://github.com/AsymLabs/realpath-lib/issues/1).  
+  
+The scripts are: 1) **make-generic-test.sh** and 2) **make-readlink-test.sh**.
+The **generic** test script can be used to test the script on a specific system,
+whereas the **readlink** script can be used to assess the library against the 
+**readlink** command if it is available on your system.  The scripts can also 
+be used to gain a better understanding of realpath-lib.  
+  
+As part of tests, a directory and subdirectories are created that are traversed
+in order to test such things as chained symlinks, symlinks of circular 
+reference, broken symlinks, non-existent symlinks or files and others. A tree
+for this found in the source code files.  It can also be examinied by the 
+command **tree foo** after running the script.
+  
+Both scripts will produce a uniquely stamped test log and error log that will be
+displayed on terinal upon completion.  These can be used for diagnostic purposes
+on any given Bash system.  The logs can also be supplied to us should you have
+problems using **realpath-lib** on your system.  
+
+The following is an excerpt from the test output (stdout) of **make-generic-test.sh**:  
+
+    ### Circular references, paths from 'foo/' for files that are symlinks ########
+    Try get_realpath circular ref foo/bar1/foo->bar1.sym   [set_logical=true]  Pass
+    Try get_realpath circular ref foo/bar1/foo->bar1.sym   [set_logical=    ]  Pass
+    Try get_realpath circular ref foo/bar2/foo->bar2.sym   [set_logical=true]  Pass
+    Try get_realpath circular ref foo/bar2/foo->bar2.sym   [set_logical=    ]  Pass
+    Try get_dirname  circular ref foo/bar1/foo->bar1.sym   [set_logical=true]  Pass
+    Try get_dirname  circular ref foo/bar1/foo->bar1.sym   [set_logical=    ]  Pass
+    ....  
+
+The following is an excerpt from the error output (stderr) of **make-generic-test.sh**:   
+
+    ### Circular references, paths from 'foo/' for files that are symlinks ########
+    L [00] -> /home/user/realpath-test/foo/bar2/foo->bar2.sym
+    L [01] -> /home/user/realpath-test/foo/bar1/foo->bar1.sym
+    L [02] -> /home/user/realpath-test/foo/bar2/foo->bar2.sym
+    E [06] Symlink circular reference issue has been detected ...
+    -----> Symlink circular reference should be investigated manually ...
+    L [00] -> /home/user/realpath-test/foo/bar1/foo->bar1.sym
+    L [01] -> /home/user/realpath-test/foo/bar2/foo->bar2.sym
+    L [02] -> /home/user/realpath-test/foo/bar1/foo->bar1.sym
+    E [06] Symlink circular reference issue has been detected ...
+    -----> Symlink circular reference should be investigated manually ...
+    L [00] -> /home/user/realpath-test/foo/bar2/foo->bar2.sym
+    L [01] -> /home/user/realpath-test/foo/bar1/foo->bar1.sym
+    L [02] -> /home/user/realpath-test/foo/bar2/foo->bar2.sym
+    E [06] Symlink circular reference issue has been detected ...
+    -----> Symlink circular reference should be investigated manually ...
+    ...  
+
+Where:  
+  
+L [..] denotes the link (shallow to deep).   
+E [..] denotes the error message emitted.  
+-----> denotes a possible solution.  
+
 Examples
 ========
 
@@ -158,45 +207,45 @@ To use the 'getters' for testing purposes, do something like:
 While these are designed to be used exclusively in scripts, some top level shell
 examples are:  
 
->[user@a52j MyLib]$ ls '/home/user/MyLib/archive.tar.gz'  
->/home/user/MyLib/archive.tar.gz  
->  
->[user@a52j MyLib]$ source realpath-lib  
->[user@a52j MyLib]$  
->  
->[user@a52j MyLib]$ get_realpath 'archive.tar.gz'  
->/home/user/MyLib/archive.tar.gz  
->  
->[user@a52j MyLib]$ get_dirname 'archive.tar.gz'  
->/home/user/MyLib  
->  
->[user@a52j MyLib]$ get_filename 'archive.tar.gz'  
->archive.tar.gz  
->  
->[user@a52j MyLib]$ get_stemname 'archive.tar.gz'  
->archive  
->  
->[user@a52j MyLib]$ validate_realpath 'archive.tar.gz'  
->[user@a52j MyLib]$  
->  
->[user@a52j MyLib]$ cd ../Templates  
->[user@a52j Templates]$  
->  
->[user@a52j Templates]$ get_realpath '../MyLib/archive.tar.gz'  
->/home/user/MyLib/archive.tar.gz  
->  
->[user@a52j Templates]$ get_dirname '../MyLib/archive.tar.gz'  
->/home/user/MyLib  
->  
->[user@a52j Templates]$ get_filename '../MyLib/archive.tar.gz'  
->archive.tar.gz  
->  
->[user@a52j Templates]$ get_stemname '../MyLib/archive.tar.gz'  
->archive  
->  
->[user@a52j Templates]$ validate_realpath '../MyLib/archive.tar.gz'  
->[user@a52j Templates]$  
-
+    [user@host MyLib]$ ls '/home/user/MyLib/archive.tar.gz'  
+    /home/user/MyLib/archive.tar.gz  
+      
+    [user@host MyLib]$ source realpath-lib  
+    [user@host MyLib]$  
+      
+    [user@host MyLib]$ get_realpath 'archive.tar.gz'  
+    /home/user/MyLib/archive.tar.gz  
+      
+    [user@host MyLib]$ get_dirname 'archive.tar.gz'  
+    /home/user/MyLib  
+      
+    [user@host MyLib]$ get_filename 'archive.tar.gz'  
+    archive.tar.gz  
+      
+    [user@host MyLib]$ get_stemname 'archive.tar.gz'  
+    archive  
+      
+    [user@host MyLib]$ validate_realpath 'archive.tar.gz'  
+    [user@host MyLib]$  
+      
+    [user@host MyLib]$ cd ../Templates  
+    [user@host Templates]$  
+      
+    [user@host Templates]$ get_realpath '../MyLib/archive.tar.gz'  
+    /home/user/MyLib/archive.tar.gz  
+      
+    [user@host Templates]$ get_dirname '../MyLib/archive.tar.gz'  
+    /home/user/MyLib  
+      
+    [user@host Templates]$ get_filename '../MyLib/archive.tar.gz'  
+    archive.tar.gz  
+      
+    [user@host Templates]$ get_stemname '../MyLib/archive.tar.gz'  
+    archive  
+      
+    [user@host Templates]$ validate_realpath '../MyLib/archive.tar.gz'  
+    [user@host Templates]$  
+  
 Terms
 =====
 
@@ -213,3 +262,4 @@ Closure
 We hope that you find this Bash library to be of value.  Should you have any
 comments or suggestions for improvement please let us know at
 dv@angb.co.  
+
