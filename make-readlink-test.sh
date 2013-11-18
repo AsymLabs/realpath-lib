@@ -33,7 +33,7 @@
 #
 #   bash make-readlink-test.sh   # without executable permission
 #
-# Version : 2013.11.17.00
+# Version : 2013.11.18.00
 # Usage   : ./make-readlink-test.sh
 # Output  : results of tests.    
 #
@@ -47,7 +47,7 @@
 # license terms are according to the MIT license that is included within
 # this repository.  Use at your own risk! You have been warned!
 #
-# Written by G R Summers. Last updated on Sun Nov 17 15:48:54 GMT 2013.
+# Written by G R Summers. Last updated on Mon Nov 18 11:03:59 GMT 2013.
 
 #### ENVIRONMENT
 
