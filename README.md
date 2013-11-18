@@ -102,10 +102,17 @@ The test scripts are illustrative.
   
 **set_strict**: setting this environment enforces strict checking of target paths.
 A path must exist and must lead to a regular file, a symlink target must exist,
-and a symlink cannot be broken.  This is at odds with the command **readlink -f**.
+and a symlink cannot be broken.  This is at odds with the command **readlink -f**.  
   
+Note that a given system may have system limits on link recursion.  So invoking
+the environment **set_strict** may lead to an unspecified error where very
+deep symlink chains exist.
+
 **set_logical**: setting this environment will see that symlinked files will not be 
 resolved to the physical system.  This is at odds with the command **readlink -f**.  
+  
+Note that the environment **set_max_depth** is not used nor will symlink chains
+be assessed when **set_logical** is envoked.
   
 **set_max_depth**: setting this environment controls the depth of symlink recursion.
 Recursion exits on three conditions: 1) when a duplicate reference occcurs (as a
