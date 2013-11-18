@@ -5,7 +5,7 @@
 # a little bit of script-foo path munching. Designed for portability. Versioning
 # is according to issue date.
 #
-# Version : 2013.11.13.00
+# Version : see $RPL_VERSION
 #
 # Usage   : source /path/to/realpath-lib
 #
@@ -73,7 +73,7 @@
 
 # RPL_VERSION.  This is used for testing and identification purposes and should 
 # not be altered.
-readonly RPL_VERSION='2013.11.17.00'
+readonly RPL_VERSION='2013.11.18.00'
 
 # RPL_SYMLINK_LIMIT.  This is the symlink recusion limit that overrides the 
 # custom environment setting of $set_max_depth that follows and should
@@ -191,7 +191,7 @@ function _cd(){
     cd "$(_directory "$1")" 2>/dev/null
 }
 
-#### PUBLIC INTERFACE METHODS ####
+#### PUBLIC INTERFACE METHODS
 
 # get_dirname "path/to/file" : gets the directory name of a path to file. Pass
 # return condition from get_realpath.
@@ -231,7 +231,7 @@ function validate_realpath(){
     (( $_code )) && exit $_code
 }
 
-#### GET_REALPATH ####
+#### GET_REALPATH
 
 # get_realpath "path/to/file" : echo the realpath as logical or physical, 
 # depending upon the environment settings.
