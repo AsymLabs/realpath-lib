@@ -3,8 +3,8 @@ realpath-lib
 
 The lightweight and simple Bash library **realpath-lib** provides functions that
 can resolve the full path associated with symlinks and file names.  There are 
-several environments available but by default the function `get_realpath` will
-emulate the popular, but often not available, command utility `readlink -f`.  
+several environments available but by default the function **get_realpath** will
+emulate the popular, but often not available, command utility **readlink -f**.  
   
 Core functions are:  
 
@@ -71,14 +71,14 @@ string (if it exists) and throw a status condition of **0 for success** or
 >get_stemname 'path-arg'  
 >  
   
-where **path-arg** can be a local file, a relative path or absolute path.   
+where **path-arg** can be a local file, a relative path or absolute path.  
   
 Validators
 ----------
 
-The function `validate_realpath` will throw a status condition of **0 for success**
+The function **validate_realpath** will throw a status condition of **0 for success**
 or will **abort on failure**.  This leads us to the following warning: **do not
-use `validate_realpath` at the top level of your shell - as a failure to validate
+use validate_realpath at the top level of your shell - as a failure to validate
 will kill the shell and any sub-processes!**  
   
 >validate_realpath 'path-arg'  
@@ -100,22 +100,23 @@ is that the chain of symlinks for a given path can be unwound where an error is
 thrown - useful for diagnostic purposes.  Capture stderr to view this information.
 The test scripts are illustrative.  
   
-**set_strict**: setting this environment enforces strict checking of target paths.  They
-must exist, the symlink target must exist, cannot be broken and the ultimate target
-must be a regular file.
-
+**set_strict**: setting this environment enforces strict checking of target paths.
+A path must exist and must lead to a regular file, a symlink target must exist,
+and a symlink cannot be broken.  This is at odds with the command **readlink -f**.
+  
 **set_logical**: setting this environment will see that symlinked files will not be 
-resolved to the physical system.  This is at odds with the command **readlink**.  
+resolved to the physical system.  This is at odds with the command **readlink -f**.  
   
 **set_max_depth**: setting this environment controls the depth of symlink recursion.
 Recursion exits on three conditions: 1) when a duplicate reference occcurs (as a
 circular reference), 2) when the set_max_depth is reached, or 3) when the built-in
 internal limit (40) is reached, whichever occurs first.  So if the set_max_depth
-is set to greater than 40, it will be disregarded.  
-
+is set to greater than 40, it will be disregarded, and 40 shall be enforced.  Of
+course this limit can be changed, but will require modification of the source.
+  
 Usage
 =====
-
+  
 This is not a Bash executable.  Source it at the beginning of your executable
 script with:  
 
@@ -188,9 +189,9 @@ The following is an excerpt from the error output (stderr) of **make-generic-tes
 
 Where:  
   
-L [..] denotes the link (shallow to deep).   
-E [..] denotes the error message emitted.  
------> denotes a possible solution.  
+    L [..] denotes the link (shallow to deep).   
+    E [..] denotes the error message emitted.  
+    -----> denotes a possible solution.  
 
 Examples
 ========
@@ -246,6 +247,35 @@ examples are:
     [user@host Templates]$ validate_realpath '../MyLib/archive.tar.gz'  
     [user@host Templates]$  
   
+
+Design
+======
+
+The library is designed with private and interface methods in mind.  The 
+function **get_realpath** is the core function for the system and the
+only function that is permitted to emit error messages and status.  The
+other interface functions are wrappers that simply pass through the return
+status of **get_realpath**.  So it is possible to do the following and
+get the same result:  
+
+    get_realpath 'path'  
+    get_stemname 'path'  
+    get_stemname "$(get_realpath 'path')"  
+    get_realpath "$(get_realpath 'path')"  
+    get_stemname "$(get_realpath "$(get_realpath 'path')")"  
+  
+although the last three will not be as efficient as the first two and are
+not recommended.  
+  
+The non-zero status conditions are not necessarily errors.  For example,
+**readlink -f** returns nothing if a circular reference is encountered.
+This condition will throw a status 3 under **get_realpath** but this is
+not an error.  It is intentional behaviour by default.  
+  
+Finally, we have attempted to use naming conventions that should avoid 
+collisions with other scripts.  This is not ensured, however, and care
+is required.  
+
 Terms
 =====
 
