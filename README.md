@@ -12,7 +12,7 @@ Core functions are:
 >get_dirname  
 >get_filename  
 >get_stemname  
->get_extension
+>get_extension  
 >validate_realpath  
 
 **realpath-lib** was inspired in part by realpath tools that are available in
@@ -72,7 +72,7 @@ string (if it exists) and throw a status condition of **0 for success** or
 >get_realpath  'path-arg'  
 >get_dirname   'path-arg'  
 >get_filename  'path-arg'  
->get_stemname  'path-arg'
+>get_stemname  'path-arg'  
 >get_extension 'path-arg'  
   
 where **path-arg** can be a local file, a relative path or absolute path.  
