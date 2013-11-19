@@ -133,9 +133,10 @@ Dependencies are Bash 4+, Posix&reg; standard **ls** and nothing else. This
 could be refactored to work with earlier Bash versions but we leave this as 
 an exercise for others.  
   
-Where the dependency is required ( only for linked files, not for linked 
-directories), the script will throw a non-zero status and exit with a message
-to stderr if **ls** cannot be found.  
+Where the dependency **ls** is required but cannot be found (only in the 
+special case where symlinks are files, it is not needed to resolve directory
+symlinks), the script will throw a non-zero status and exit with a message 
+to stderr.  
   
 Usage
 =====
