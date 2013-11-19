@@ -33,7 +33,7 @@
 #
 #   bash make-generic-test.sh   # without executable permission
 #
-# Version : 2013.11.18.00
+# Version : 2013.11.19.00
 # Usage   : ./make-generic-test.sh
 # Output  : results of tests.    
 #
@@ -47,7 +47,8 @@
 # license terms are according to the MIT license that is included within
 # this repository.  Use at your own risk! You have been warned!
 #
-# Written by G R Summers. Last updated on Mon Nov 18 11:04:44 GMT 2013
+# Written by G R Summers. Last updated on Tue Nov 19 10:16:36 GMT 2013
+
 #### ENVIRONMENT
 
 source realpath-lib
@@ -155,7 +156,7 @@ function make_test() {
     (( $_exit_status )) && _result="$(printf 'Error Code %s' "$_exit_status")"
 
     # produce message
-    _printf="$(printf 'Try %-12s %-37s [set_logical=%-4s] ' "$_function" "$_message $_path" "$set_logical")"
+    _printf="$(printf 'Try %-14s %-37s set_logical=%-4s ' "$_function" "$_message $_path" "$set_logical")"
     if [[ "$_result" != "$_expected" ]]; then
         echo "$_printf Fail"
         echo "--> specified \"$_specified\" but got \"$_result\""
@@ -195,57 +196,67 @@ make_header | tee "$stdout_log" > "$stderr_log"
         # Series I:  Using 'set_strict=true' for all.
         echo
         echo "===============================================================================" | $tee_stderr
-        echo "=    Testing Realpath-Lib as 'set_strict=true' and 'set_logical={ |true}'     =" | $tee_stderr
+        echo "= Case I: Testing Realpath-Lib as 'set_strict=true' and 'set_logical={|true}' =" | $tee_stderr
         echo "===============================================================================" | $tee_stderr
         echo | $tee_stderr
 
         # Begin tests
         echo "### Logical and physical paths from 'foo/' for symlinks that exist ############" | $tee_stderr 
 
-        set_strict=true set_logical=true make_test get_realpath "existing symlink" "foo/bar3/baz.phys" "foo/bar3/baz.phys"
-        set_strict=true                  make_test get_realpath "existing symlink" "foo/bar3/baz.phys" "foo/bar1/baz.phys"
-        set_strict=true set_logical=true make_test get_realpath "existing symlink" "foo/bar2/foobaz.sym" "foo/bar2/foobaz.sym"
-        set_strict=true                  make_test get_realpath "existing symlink" "foo/bar2/foobaz.sym" "foo/bar1/foo->baz.phys"
-        set_strict=true set_logical=true make_test get_realpath "existing symlink" "foo/bar2/bazbaz.sym" "foo/bar2/bazbaz.sym"
-        set_strict=true                  make_test get_realpath "existing symlink" "foo/bar2/bazbaz.sym" "foo/bar1/baz.phys"
+        set_strict=true set_logical=true make_test get_realpath  "existing symlink" "foo/bar3/baz.phys" "foo/bar3/baz.phys"
+        set_strict=true                  make_test get_realpath  "existing symlink" "foo/bar3/baz.phys" "foo/bar1/baz.phys"
+        set_strict=true set_logical=true make_test get_realpath  "existing symlink" "foo/bar2/foobaz.sym" "foo/bar2/foobaz.sym"
+        set_strict=true                  make_test get_realpath  "existing symlink" "foo/bar2/foobaz.sym" "foo/bar1/foo->baz.phys"
+        set_strict=true set_logical=true make_test get_realpath  "existing symlink" "foo/bar2/bazbaz.sym" "foo/bar2/bazbaz.sym"
+        set_strict=true                  make_test get_realpath  "existing symlink" "foo/bar2/bazbaz.sym" "foo/bar1/baz.phys"
 
-        set_strict=true set_logical=true make_test get_dirname  "existing symlink" "foo/bar3/baz.phys" "foo/bar3"
-        set_strict=true                  make_test get_dirname  "existing symlink" "foo/bar3/baz.phys" "foo/bar1"
-        set_strict=true set_logical=true make_test get_dirname  "existing symlink" "foo/bar2/foobaz.sym" "foo/bar2"
-        set_strict=true                  make_test get_dirname  "existing symlink" "foo/bar2/foobaz.sym" "foo/bar1"
-        set_strict=true set_logical=true make_test get_dirname  "existing symlink" "foo/bar2/bazbaz.sym" "foo/bar2"
-        set_strict=true                  make_test get_dirname  "existing symlink" "foo/bar2/bazbaz.sym" "foo/bar1"
+        set_strict=true set_logical=true make_test get_dirname   "existing symlink" "foo/bar3/baz.phys" "foo/bar3"
+        set_strict=true                  make_test get_dirname   "existing symlink" "foo/bar3/baz.phys" "foo/bar1"
+        set_strict=true set_logical=true make_test get_dirname   "existing symlink" "foo/bar2/foobaz.sym" "foo/bar2"
+        set_strict=true                  make_test get_dirname   "existing symlink" "foo/bar2/foobaz.sym" "foo/bar1"
+        set_strict=true set_logical=true make_test get_dirname   "existing symlink" "foo/bar2/bazbaz.sym" "foo/bar2"
+        set_strict=true                  make_test get_dirname   "existing symlink" "foo/bar2/bazbaz.sym" "foo/bar1"
 
-        set_strict=true set_logical=true make_test get_filename "existing symlink" "foo/bar3/baz.phys" "baz.phys"
-        set_strict=true                  make_test get_filename "existing symlink" "foo/bar3/baz.phys" "baz.phys"
-        set_strict=true set_logical=true make_test get_filename "existing symlink" "foo/bar2/foobaz.sym" "foobaz.sym"
-        set_strict=true                  make_test get_filename "existing symlink" "foo/bar2/foobaz.sym" "foo->baz.phys"
-        set_strict=true set_logical=true make_test get_filename "existing symlink" "foo/bar2/bazbaz.sym" "bazbaz.sym"
-        set_strict=true                  make_test get_filename "existing symlink" "foo/bar2/bazbaz.sym" "baz.phys"
+        set_strict=true set_logical=true make_test get_filename  "existing symlink" "foo/bar3/baz.phys" "baz.phys"
+        set_strict=true                  make_test get_filename  "existing symlink" "foo/bar3/baz.phys" "baz.phys"
+        set_strict=true set_logical=true make_test get_filename  "existing symlink" "foo/bar2/foobaz.sym" "foobaz.sym"
+        set_strict=true                  make_test get_filename  "existing symlink" "foo/bar2/foobaz.sym" "foo->baz.phys"
+        set_strict=true set_logical=true make_test get_filename  "existing symlink" "foo/bar2/bazbaz.sym" "bazbaz.sym"
+        set_strict=true                  make_test get_filename  "existing symlink" "foo/bar2/bazbaz.sym" "baz.phys"
 
-        set_strict=true set_logical=true make_test get_stemname "existing symlink" "foo/bar3/baz.phys" "baz"
-        set_strict=true                  make_test get_stemname "existing symlink" "foo/bar3/baz.phys" "baz"
-        set_strict=true set_logical=true make_test get_stemname "existing symlink" "foo/bar2/foobaz.sym" "foobaz"
-        set_strict=true                  make_test get_stemname "existing symlink" "foo/bar2/foobaz.sym" "foo->baz"
-        set_strict=true set_logical=true make_test get_stemname "existing symlink" "foo/bar2/bazbaz.sym" "bazbaz"
-        set_strict=true                  make_test get_stemname "existing symlink" "foo/bar2/bazbaz.sym" "baz"
+        set_strict=true set_logical=true make_test get_stemname  "existing symlink" "foo/bar3/baz.phys" "baz"
+        set_strict=true                  make_test get_stemname  "existing symlink" "foo/bar3/baz.phys" "baz"
+        set_strict=true set_logical=true make_test get_stemname  "existing symlink" "foo/bar2/foobaz.sym" "foobaz"
+        set_strict=true                  make_test get_stemname  "existing symlink" "foo/bar2/foobaz.sym" "foo->baz"
+        set_strict=true set_logical=true make_test get_stemname  "existing symlink" "foo/bar2/bazbaz.sym" "bazbaz"
+        set_strict=true                  make_test get_stemname  "existing symlink" "foo/bar2/bazbaz.sym" "baz"
+
+        set_strict=true set_logical=true make_test get_extension "existing symlink" "foo/bar3/baz.phys" "phys"
+        set_strict=true                  make_test get_extension "existing symlink" "foo/bar3/baz.phys" "phys"
+        set_strict=true set_logical=true make_test get_extension "existing symlink" "foo/bar2/foobaz.sym" "sym"
+        set_strict=true                  make_test get_extension "existing symlink" "foo/bar2/foobaz.sym" "phys"
+        set_strict=true set_logical=true make_test get_extension "existing symlink" "foo/bar2/bazbaz.sym" "sym"
+        set_strict=true                  make_test get_extension "existing symlink" "foo/bar2/bazbaz.sym" "phys"
 
         echo | $tee_stderr
         echo "### Logical and physical paths from 'foo/bar2/' for symlinks that exist #######" | $tee_stderr
 
         cd foo/bar2 &>/dev/null
 
-        set_strict=true set_logical=true make_test get_realpath "existing symlink" "baz.sym" "foo/bar2/baz.sym"
-        set_strict=true                  make_test get_realpath "existing symlink" "baz.sym" "foo/bar1/baz.phys"
+        set_strict=true set_logical=true make_test get_realpath  "existing symlink" "baz.sym" "foo/bar2/baz.sym"
+        set_strict=true                  make_test get_realpath  "existing symlink" "baz.sym" "foo/bar1/baz.phys"
 
-        set_strict=true set_logical=true make_test get_dirname  "existing symlink" "baz.sym" "foo/bar2"
-        set_strict=true                  make_test get_dirname  "existing symlink" "baz.sym" "foo/bar1"
+        set_strict=true set_logical=true make_test get_dirname   "existing symlink" "baz.sym" "foo/bar2"
+        set_strict=true                  make_test get_dirname   "existing symlink" "baz.sym" "foo/bar1"
 
-        set_strict=true set_logical=true make_test get_filename "existing symlink" "baz.sym" "baz.sym"
-        set_strict=true                  make_test get_filename "existing symlink" "baz.sym" "baz.phys"
+        set_strict=true set_logical=true make_test get_filename  "existing symlink" "baz.sym" "baz.sym"
+        set_strict=true                  make_test get_filename  "existing symlink" "baz.sym" "baz.phys"
 
-        set_strict=true set_logical=true make_test get_stemname "existing symlink" "baz.sym" "baz"
-        set_strict=true                  make_test get_stemname "existing symlink" "baz.sym" "baz"
+        set_strict=true set_logical=true make_test get_stemname  "existing symlink" "baz.sym" "baz"
+        set_strict=true                  make_test get_stemname  "existing symlink" "baz.sym" "baz"
+
+        set_strict=true set_logical=true make_test get_extension "existing symlink" "baz.sym" "sym"
+        set_strict=true                  make_test get_extension "existing symlink" "baz.sym" "phys"
 
         cd - &>/dev/null
 
@@ -254,109 +265,130 @@ make_header | tee "$stdout_log" > "$stderr_log"
         
         cd foo/bar3 &>/dev/null
 
-        set_strict=true set_logical=true make_test get_realpath "existing symlink" "baz.phys" "foo/bar3/baz.phys"
-        set_strict=true                  make_test get_realpath "existing symlink" "baz.phys" "foo/bar1/baz.phys"
-        set_strict=true set_logical=true make_test get_realpath "existing symlink" "foo->baz.phys" "foo/bar3/foo->baz.phys"
-        set_strict=true                  make_test get_realpath "existing symlink" "foo->baz.phys" "foo/bar1/foo->baz.phys"
+        set_strict=true set_logical=true make_test get_realpath  "existing symlink" "baz.phys" "foo/bar3/baz.phys"
+        set_strict=true                  make_test get_realpath  "existing symlink" "baz.phys" "foo/bar1/baz.phys"
+        set_strict=true set_logical=true make_test get_realpath  "existing symlink" "foo->baz.phys" "foo/bar3/foo->baz.phys"
+        set_strict=true                  make_test get_realpath  "existing symlink" "foo->baz.phys" "foo/bar1/foo->baz.phys"
 
-        set_strict=true set_logical=true make_test get_dirname  "existing symlink" "baz.phys" "foo/bar3"
-        set_strict=true                  make_test get_dirname  "existing symlink" "baz.phys" "foo/bar1"
-        set_strict=true set_logical=true make_test get_dirname  "existing symlink" "foo->baz.phys" "foo/bar3"
-        set_strict=true                  make_test get_dirname  "existing symlink" "foo->baz.phys" "foo/bar1"
+        set_strict=true set_logical=true make_test get_dirname   "existing symlink" "baz.phys" "foo/bar3"
+        set_strict=true                  make_test get_dirname   "existing symlink" "baz.phys" "foo/bar1"
+        set_strict=true set_logical=true make_test get_dirname   "existing symlink" "foo->baz.phys" "foo/bar3"
+        set_strict=true                  make_test get_dirname   "existing symlink" "foo->baz.phys" "foo/bar1"
 
-        set_strict=true set_logical=true make_test get_filename "existing symlink" "baz.phys" "baz.phys"
-        set_strict=true                  make_test get_filename "existing symlink" "baz.phys" "baz.phys"
-        set_strict=true set_logical=true make_test get_filename "existing symlink" "foo->baz.phys" "foo->baz.phys"
-        set_strict=true                  make_test get_filename "existing symlink" "foo->baz.phys" "foo->baz.phys"
+        set_strict=true set_logical=true make_test get_filename  "existing symlink" "baz.phys" "baz.phys"
+        set_strict=true                  make_test get_filename  "existing symlink" "baz.phys" "baz.phys"
+        set_strict=true set_logical=true make_test get_filename  "existing symlink" "foo->baz.phys" "foo->baz.phys"
+        set_strict=true                  make_test get_filename  "existing symlink" "foo->baz.phys" "foo->baz.phys"
 
-        set_strict=true set_logical=true make_test get_stemname "existing symlink" "baz.phys" "baz"
-        set_strict=true                  make_test get_stemname "existing symlink" "baz.phys" "baz"
-        set_strict=true set_logical=true make_test get_stemname "existing symlink" "foo->baz.phys" "foo->baz"
-        set_strict=true                  make_test get_stemname "existing symlink" "foo->baz.phys" "foo->baz"
+        set_strict=true set_logical=true make_test get_stemname  "existing symlink" "baz.phys" "baz"
+        set_strict=true                  make_test get_stemname  "existing symlink" "baz.phys" "baz"
+        set_strict=true set_logical=true make_test get_stemname  "existing symlink" "foo->baz.phys" "foo->baz"
+        set_strict=true                  make_test get_stemname  "existing symlink" "foo->baz.phys" "foo->baz"
+
+        set_strict=true set_logical=true make_test get_extension "existing symlink" "baz.phys" "phys"
+        set_strict=true                  make_test get_extension "existing symlink" "baz.phys" "phys"
+        set_strict=true set_logical=true make_test get_extension "existing symlink" "foo->baz.phys" "phys"
+        set_strict=true                  make_test get_extension "existing symlink" "foo->baz.phys" "phys"
 
         cd - &>/dev/null
 
         echo | $tee_stderr
         echo "### Logical and physical paths from 'foo/' for symlinks that do not exist #####" | $tee_stderr
  
-        set_strict=true set_logical=true make_test get_realpath "non-existant symlink" "foo/bar2/no.foo" "Error Code 1"
-        set_strict=true                  make_test get_realpath "non-existant symlink" "foo/bar2/no.foo" "Error Code 1"
+        set_strict=true set_logical=true make_test get_realpath  "non-existant symlink" "foo/bar2/no.foo" "Error Code 1"
+        set_strict=true                  make_test get_realpath  "non-existant symlink" "foo/bar2/no.foo" "Error Code 1"
 
-        set_strict=true set_logical=true make_test get_dirname  "non-existant symlink" "foo/bar2/no.foo" "Error Code 1"
-        set_strict=true                  make_test get_dirname  "non-existant symlink" "foo/bar2/no.foo" "Error Code 1"
+        set_strict=true set_logical=true make_test get_dirname   "non-existant symlink" "foo/bar2/no.foo" "Error Code 1"
+        set_strict=true                  make_test get_dirname   "non-existant symlink" "foo/bar2/no.foo" "Error Code 1"
 
-        set_strict=true set_logical=true make_test get_filename "non-existant symlink" "foo/bar2/no.foo" "Error Code 1"
-        set_strict=true                  make_test get_filename "non-existant symlink" "foo/bar2/no.foo" "Error Code 1"
+        set_strict=true set_logical=true make_test get_filename  "non-existant symlink" "foo/bar2/no.foo" "Error Code 1"
+        set_strict=true                  make_test get_filename  "non-existant symlink" "foo/bar2/no.foo" "Error Code 1"
 
-        set_strict=true set_logical=true make_test get_stemname "non-existant symlink" "foo/bar2/no.foo" "Error Code 1"
-        set_strict=true                  make_test get_stemname "non-existant symlink" "foo/bar2/no.foo" "Error Code 1"
+        set_strict=true set_logical=true make_test get_stemname  "non-existant symlink" "foo/bar2/no.foo" "Error Code 1"
+        set_strict=true                  make_test get_stemname  "non-existant symlink" "foo/bar2/no.foo" "Error Code 1"
+
+        set_strict=true set_logical=true make_test get_extension "non-existant symlink" "foo/bar2/no.foo" "Error Code 1"
+        set_strict=true                  make_test get_extension "non-existant symlink" "foo/bar2/no.foo" "Error Code 1"
 
         echo | $tee_stderr
         echo "### Logical and physical paths from 'foo/' for symlinks that are broken #######" | $tee_stderr
  
-        set_strict=true set_logical=true make_test get_realpath "broken symlink" "foo/bar2/broken.sym" "Error Code 1"
-        set_strict=true                  make_test get_realpath "broken symlink" "foo/bar2/broken.sym" "Error Code 1"
+        set_strict=true set_logical=true make_test get_realpath  "broken symlink" "foo/bar2/broken.sym" "Error Code 1"
+        set_strict=true                  make_test get_realpath  "broken symlink" "foo/bar2/broken.sym" "Error Code 1"
 
-        set_strict=true set_logical=true make_test get_dirname  "broken symlink" "foo/bar2/broken.sym" "Error Code 1"
-        set_strict=true                  make_test get_dirname  "broken symlink" "foo/bar2/broken.sym" "Error Code 1"
+        set_strict=true set_logical=true make_test get_dirname   "broken symlink" "foo/bar2/broken.sym" "Error Code 1"
+        set_strict=true                  make_test get_dirname   "broken symlink" "foo/bar2/broken.sym" "Error Code 1"
 
-        set_strict=true set_logical=true make_test get_filename "broken symlink" "foo/bar2/broken.sym" "Error Code 1"
-        set_strict=true                  make_test get_filename "broken symlink" "foo/bar2/broken.sym" "Error Code 1"
+        set_strict=true set_logical=true make_test get_filename  "broken symlink" "foo/bar2/broken.sym" "Error Code 1"
+        set_strict=true                  make_test get_filename  "broken symlink" "foo/bar2/broken.sym" "Error Code 1"
 
-        set_strict=true set_logical=true make_test get_stemname "broken symlink" "foo/bar2/broken.sym" "Error Code 1"
-        set_strict=true                  make_test get_stemname "broken symlink" "foo/bar2/broken.sym" "Error Code 1"
+        set_strict=true set_logical=true make_test get_stemname  "broken symlink" "foo/bar2/broken.sym" "Error Code 1"
+        set_strict=true                  make_test get_stemname  "broken symlink" "foo/bar2/broken.sym" "Error Code 1"
+
+        set_strict=true set_logical=true make_test get_extension "broken symlink" "foo/bar2/broken.sym" "Error Code 1"
+        set_strict=true                  make_test get_extension "broken symlink" "foo/bar2/broken.sym" "Error Code 1"
 
         echo | $tee_stderr
         echo "### Logical and physical paths from 'foo/' for files that are not symlinks ####" | $tee_stderr
  
-        set_strict=true set_logical=true make_test get_realpath "ordinary file" "foo/bar1/baz.phys" "foo/bar1/baz.phys"
-        set_strict=true                  make_test get_realpath "ordinary file" "foo/bar1/baz.phys" "foo/bar1/baz.phys"
-        set_strict=true set_logical=true make_test get_realpath "ordinary file" "foo/bar1/foo->baz.phys" "foo/bar1/foo->baz.phys"
-        set_strict=true                  make_test get_realpath "ordinary file" "foo/bar1/foo->baz.phys" "foo/bar1/foo->baz.phys"
+        set_strict=true set_logical=true make_test get_realpath  "ordinary file" "foo/bar1/baz.phys" "foo/bar1/baz.phys"
+        set_strict=true                  make_test get_realpath  "ordinary file" "foo/bar1/baz.phys" "foo/bar1/baz.phys"
+        set_strict=true set_logical=true make_test get_realpath  "ordinary file" "foo/bar1/foo->baz.phys" "foo/bar1/foo->baz.phys"
+        set_strict=true                  make_test get_realpath  "ordinary file" "foo/bar1/foo->baz.phys" "foo/bar1/foo->baz.phys"
 
-        set_strict=true set_logical=true make_test get_dirname  "ordinary file" "foo/bar1/baz.phys" "foo/bar1"
-        set_strict=true                  make_test get_dirname  "ordinary file" "foo/bar1/baz.phys" "foo/bar1"
-        set_strict=true set_logical=true make_test get_dirname  "ordinary file" "foo/bar1/foo->baz.phys" "foo/bar1"
-        set_strict=true                  make_test get_dirname  "ordinary file" "foo/bar1/foo->baz.phys" "foo/bar1"
+        set_strict=true set_logical=true make_test get_dirname   "ordinary file" "foo/bar1/baz.phys" "foo/bar1"
+        set_strict=true                  make_test get_dirname   "ordinary file" "foo/bar1/baz.phys" "foo/bar1"
+        set_strict=true set_logical=true make_test get_dirname   "ordinary file" "foo/bar1/foo->baz.phys" "foo/bar1"
+        set_strict=true                  make_test get_dirname   "ordinary file" "foo/bar1/foo->baz.phys" "foo/bar1"
 
-        set_strict=true set_logical=true make_test get_filename "ordinary file" "foo/bar1/baz.phys" "baz.phys"
-        set_strict=true                  make_test get_filename "ordinary file" "foo/bar1/baz.phys" "baz.phys"
-        set_strict=true set_logical=true make_test get_filename "ordinary file" "foo/bar1/foo->baz.phys" "foo->baz.phys"
-        set_strict=true                  make_test get_filename "ordinary file" "foo/bar1/foo->baz.phys" "foo->baz.phys"
+        set_strict=true set_logical=true make_test get_filename  "ordinary file" "foo/bar1/baz.phys" "baz.phys"
+        set_strict=true                  make_test get_filename  "ordinary file" "foo/bar1/baz.phys" "baz.phys"
+        set_strict=true set_logical=true make_test get_filename  "ordinary file" "foo/bar1/foo->baz.phys" "foo->baz.phys"
+        set_strict=true                  make_test get_filename  "ordinary file" "foo/bar1/foo->baz.phys" "foo->baz.phys"
 
-        set_strict=true set_logical=true make_test get_stemname "ordinary file" "foo/bar1/baz.phys" "baz"
-        set_strict=true                  make_test get_stemname "ordinary file" "foo/bar1/baz.phys" "baz"
-        set_strict=true set_logical=true make_test get_stemname "ordinary file" "foo/bar1/foo->baz.phys" "foo->baz"
-        set_strict=true                  make_test get_stemname "ordinary file" "foo/bar1/foo->baz.phys" "foo->baz"
+        set_strict=true set_logical=true make_test get_stemname  "ordinary file" "foo/bar1/baz.phys" "baz"
+        set_strict=true                  make_test get_stemname  "ordinary file" "foo/bar1/baz.phys" "baz"
+        set_strict=true set_logical=true make_test get_stemname  "ordinary file" "foo/bar1/foo->baz.phys" "foo->baz"
+        set_strict=true                  make_test get_stemname  "ordinary file" "foo/bar1/foo->baz.phys" "foo->baz"
+
+        set_strict=true set_logical=true make_test get_extension "ordinary file" "foo/bar1/baz.phys" "phys"
+        set_strict=true                  make_test get_extension "ordinary file" "foo/bar1/baz.phys" "phys"
+        set_strict=true set_logical=true make_test get_extension "ordinary file" "foo/bar1/foo->baz.phys" "phys"
+        set_strict=true                  make_test get_extension "ordinary file" "foo/bar1/foo->baz.phys" "phys"
 
         echo | $tee_stderr
         echo "### Circular references, paths from 'foo/' for files that are symlinks ########" | $tee_stderr
  
-        set_strict=true set_logical=true make_test get_realpath "circular ref" "foo/bar1/foo->bar1.sym" "Error Code 1"
-        set_strict=true                  make_test get_realpath "circular ref" "foo/bar1/foo->bar1.sym" "Error Code 1"
-        set_strict=true set_logical=true make_test get_realpath "circular ref" "foo/bar2/foo->bar2.sym" "Error Code 1"
-        set_strict=true                  make_test get_realpath "circular ref" "foo/bar2/foo->bar2.sym" "Error Code 1"
+        set_strict=true set_logical=true make_test get_realpath  "circular ref" "foo/bar1/foo->bar1.sym" "Error Code 1"
+        set_strict=true                  make_test get_realpath  "circular ref" "foo/bar1/foo->bar1.sym" "Error Code 1"
+        set_strict=true set_logical=true make_test get_realpath  "circular ref" "foo/bar2/foo->bar2.sym" "Error Code 1"
+        set_strict=true                  make_test get_realpath  "circular ref" "foo/bar2/foo->bar2.sym" "Error Code 1"
 
-        set_strict=true set_logical=true make_test get_dirname  "circular ref" "foo/bar1/foo->bar1.sym" "Error Code 1"
-        set_strict=true                  make_test get_dirname  "circular ref" "foo/bar1/foo->bar1.sym" "Error Code 1"
-        set_strict=true set_logical=true make_test get_dirname  "circular ref" "foo/bar2/foo->bar2.sym" "Error Code 1"
-        set_strict=true                  make_test get_dirname  "circular ref" "foo/bar2/foo->bar2.sym" "Error Code 1"
+        set_strict=true set_logical=true make_test get_dirname   "circular ref" "foo/bar1/foo->bar1.sym" "Error Code 1"
+        set_strict=true                  make_test get_dirname   "circular ref" "foo/bar1/foo->bar1.sym" "Error Code 1"
+        set_strict=true set_logical=true make_test get_dirname   "circular ref" "foo/bar2/foo->bar2.sym" "Error Code 1"
+        set_strict=true                  make_test get_dirname   "circular ref" "foo/bar2/foo->bar2.sym" "Error Code 1"
 
-        set_strict=true set_logical=true make_test get_filename "circular ref" "foo/bar1/foo->bar1.sym" "Error Code 1"
-        set_strict=true                  make_test get_filename "circular ref" "foo/bar1/foo->bar1.sym" "Error Code 1"
-        set_strict=true set_logical=true make_test get_filename "circular ref" "foo/bar2/foo->bar2.sym" "Error Code 1"
-        set_strict=true                  make_test get_filename "circular ref" "foo/bar2/foo->bar2.sym" "Error Code 1"
+        set_strict=true set_logical=true make_test get_filename  "circular ref" "foo/bar1/foo->bar1.sym" "Error Code 1"
+        set_strict=true                  make_test get_filename  "circular ref" "foo/bar1/foo->bar1.sym" "Error Code 1"
+        set_strict=true set_logical=true make_test get_filename  "circular ref" "foo/bar2/foo->bar2.sym" "Error Code 1"
+        set_strict=true                  make_test get_filename  "circular ref" "foo/bar2/foo->bar2.sym" "Error Code 1"
 
-        set_strict=true set_logical=true make_test get_stemname "circular ref" "foo/bar1/foo->bar1.sym" "Error Code 1"
-        set_strict=true                  make_test get_stemname "circular ref" "foo/bar1/foo->bar1.sym" "Error Code 1"
-        set_strict=true set_logical=true make_test get_stemname "circular ref" "foo/bar2/foo->bar2.sym" "Error Code 1"
-        set_strict=true                  make_test get_stemname "circular ref" "foo/bar2/foo->bar2.sym" "Error Code 1"
+        set_strict=true set_logical=true make_test get_stemname  "circular ref" "foo/bar1/foo->bar1.sym" "Error Code 1"
+        set_strict=true                  make_test get_stemname  "circular ref" "foo/bar1/foo->bar1.sym" "Error Code 1"
+        set_strict=true set_logical=true make_test get_stemname  "circular ref" "foo/bar2/foo->bar2.sym" "Error Code 1"
+        set_strict=true                  make_test get_stemname  "circular ref" "foo/bar2/foo->bar2.sym" "Error Code 1"
+
+        set_strict=true set_logical=true make_test get_extension "circular ref" "foo/bar1/foo->bar1.sym" "Error Code 1"
+        set_strict=true                  make_test get_extension "circular ref" "foo/bar1/foo->bar1.sym" "Error Code 1"
+        set_strict=true set_logical=true make_test get_extension "circular ref" "foo/bar2/foo->bar2.sym" "Error Code 1"
+        set_strict=true                  make_test get_extension "circular ref" "foo/bar2/foo->bar2.sym" "Error Code 1"
 
         # Series II : Using 'set_strict=' for all. 
         # 
         echo | $tee_stderr 
         echo "===============================================================================" | $tee_stderr
-        echo "=      Testing 'Realpath-Lib' as 'set_strict=' and 'set_logical={ |true}'     =" | $tee_stderr
+        echo "=  Case II: Testing 'Realpath-Lib' as 'set_strict=' and 'set_logical={|true}' =" | $tee_stderr
         echo "===============================================================================" | $tee_stderr
         echo | $tee_stderr
 
@@ -391,6 +423,13 @@ make_header | tee "$stdout_log" > "$stderr_log"
                         set_logical=true make_test get_stemname "existing symlink" "foo/bar2/bazbaz.sym" "bazbaz"
                                          make_test get_stemname "existing symlink" "foo/bar2/bazbaz.sym" "baz"
 
+                        set_logical=true make_test get_extension "existing symlink" "foo/bar3/baz.phys" "phys"
+                                         make_test get_extension "existing symlink" "foo/bar3/baz.phys" "phys"
+                        set_logical=true make_test get_extension "existing symlink" "foo/bar2/foobaz.sym" "sym"
+                                         make_test get_extension "existing symlink" "foo/bar2/foobaz.sym" "phys"
+                        set_logical=true make_test get_extension "existing symlink" "foo/bar2/bazbaz.sym" "sym"
+                                         make_test get_extension "existing symlink" "foo/bar2/bazbaz.sym" "phys"
+
         echo | $tee_stderr
         echo "### Logical and physical paths from 'foo/bar2/' for symlinks that exist #######" | $tee_stderr
  
@@ -408,6 +447,9 @@ make_header | tee "$stdout_log" > "$stderr_log"
                         set_logical=true make_test get_stemname "existing symlink" "baz.sym" "baz"
                                          make_test get_stemname "existing symlink" "baz.sym" "baz"
 
+                        set_logical=true make_test get_extension "existing symlink" "baz.sym" "sym"
+                                         make_test get_extension "existing symlink" "baz.sym" "phys"
+
         cd - &>/dev/null
 
         echo | $tee_stderr
@@ -415,103 +457,125 @@ make_header | tee "$stdout_log" > "$stderr_log"
  
         cd foo/bar3 &>/dev/null
 
-                        set_logical=true make_test get_realpath "existing symlink" "baz.phys" "foo/bar3/baz.phys"
-                                         make_test get_realpath "existing symlink" "baz.phys" "foo/bar1/baz.phys"
-                        set_logical=true make_test get_realpath "existing symlink" "foo->baz.phys" "foo/bar3/foo->baz.phys"
-                                         make_test get_realpath "existing symlink" "foo->baz.phys" "foo/bar1/foo->baz.phys"
+                        set_logical=true make_test get_realpath  "existing symlink" "baz.phys" "foo/bar3/baz.phys"
+                                         make_test get_realpath  "existing symlink" "baz.phys" "foo/bar1/baz.phys"
+                        set_logical=true make_test get_realpath  "existing symlink" "foo->baz.phys" "foo/bar3/foo->baz.phys"
+                                         make_test get_realpath  "existing symlink" "foo->baz.phys" "foo/bar1/foo->baz.phys"
 
-                        set_logical=true make_test get_dirname  "existing symlink" "baz.phys" "foo/bar3"
-                                         make_test get_dirname  "existing symlink" "baz.phys" "foo/bar1"
-                        set_logical=true make_test get_dirname  "existing symlink" "foo->baz.phys" "foo/bar3"
-                                         make_test get_dirname  "existing symlink" "foo->baz.phys" "foo/bar1"
+                        set_logical=true make_test get_dirname   "existing symlink" "baz.phys" "foo/bar3"
+                                         make_test get_dirname   "existing symlink" "baz.phys" "foo/bar1"
+                        set_logical=true make_test get_dirname   "existing symlink" "foo->baz.phys" "foo/bar3"
+                                         make_test get_dirname   "existing symlink" "foo->baz.phys" "foo/bar1"
 
-                        set_logical=true make_test get_filename "existing symlink" "baz.phys" "baz.phys"
-                                         make_test get_filename "existing symlink" "baz.phys" "baz.phys"
-                        set_logical=true make_test get_filename "existing symlink" "foo->baz.phys" "foo->baz.phys"
-                                         make_test get_filename "existing symlink" "foo->baz.phys" "foo->baz.phys"
+                        set_logical=true make_test get_filename  "existing symlink" "baz.phys" "baz.phys"
+                                         make_test get_filename  "existing symlink" "baz.phys" "baz.phys"
+                        set_logical=true make_test get_filename  "existing symlink" "foo->baz.phys" "foo->baz.phys"
+                                         make_test get_filename  "existing symlink" "foo->baz.phys" "foo->baz.phys"
 
-                        set_logical=true make_test get_stemname "existing symlink" "baz.phys" "baz"
-                                         make_test get_stemname "existing symlink" "baz.phys" "baz"
-                        set_logical=true make_test get_stemname "existing symlink" "foo->baz.phys" "foo->baz"
-                                         make_test get_stemname "existing symlink" "foo->baz.phys" "foo->baz"
+                        set_logical=true make_test get_stemname  "existing symlink" "baz.phys" "baz"
+                                         make_test get_stemname  "existing symlink" "baz.phys" "baz"
+                        set_logical=true make_test get_stemname  "existing symlink" "foo->baz.phys" "foo->baz"
+                                         make_test get_stemname  "existing symlink" "foo->baz.phys" "foo->baz"
+
+                        set_logical=true make_test get_extension "existing symlink" "baz.phys" "phys"
+                                         make_test get_extension "existing symlink" "baz.phys" "phys"
+                        set_logical=true make_test get_extension "existing symlink" "foo->baz.phys" "phys"
+                                         make_test get_extension "existing symlink" "foo->baz.phys" "phys"
 
         cd - &>/dev/null
 
         echo | $tee_stderr
         echo "### Logical and physical paths from 'foo/' for symlinks that do not exist #####" | $tee_stderr
  
-                        set_logical=true make_test get_realpath "non-existant symlink" "foo/bar2/no.foo" "foo/bar2/no.foo"
-                                         make_test get_realpath "non-existant symlink" "foo/bar2/no.foo" "foo/bar2/no.foo"
+                        set_logical=true make_test get_realpath  "non-existant symlink" "foo/bar2/no.foo" "foo/bar2/no.foo"
+                                         make_test get_realpath  "non-existant symlink" "foo/bar2/no.foo" "foo/bar2/no.foo"
 
-                        set_logical=true make_test get_dirname  "non-existant symlink" "foo/bar2/no.foo" "foo/bar2"
-                                         make_test get_dirname  "non-existant symlink" "foo/bar2/no.foo" "foo/bar2"
+                        set_logical=true make_test get_dirname   "non-existant symlink" "foo/bar2/no.foo" "foo/bar2"
+                                         make_test get_dirname   "non-existant symlink" "foo/bar2/no.foo" "foo/bar2"
 
-                        set_logical=true make_test get_filename "non-existant symlink" "foo/bar2/no.foo" "no.foo"
-                                         make_test get_filename "non-existant symlink" "foo/bar2/no.foo" "no.foo"
+                        set_logical=true make_test get_filename  "non-existant symlink" "foo/bar2/no.foo" "no.foo"
+                                         make_test get_filename  "non-existant symlink" "foo/bar2/no.foo" "no.foo"
 
-                        set_logical=true make_test get_stemname "non-existant symlink" "foo/bar2/no.foo" "no"
-                                         make_test get_stemname "non-existant symlink" "foo/bar2/no.foo" "no"
+                        set_logical=true make_test get_stemname  "non-existant symlink" "foo/bar2/no.foo" "no"
+                                         make_test get_stemname  "non-existant symlink" "foo/bar2/no.foo" "no"
+
+                        set_logical=true make_test get_extension "non-existant symlink" "foo/bar2/no.foo" "foo"
+                                         make_test get_extension "non-existant symlink" "foo/bar2/no.foo" "foo"
+
 
         echo | $tee_stderr
         echo "### Logical and physical paths from 'foo/' for symlinks that are broken #######" | $tee_stderr
  
-                        set_logical=true make_test get_realpath "broken symlink" "foo/bar2/broken.sym" "foo/bar2/broken.sym"
-                                         make_test get_realpath "broken symlink" "foo/bar2/broken.sym" "foo/bar1/broken.phys"
+                        set_logical=true make_test get_realpath  "broken symlink" "foo/bar2/broken.sym" "foo/bar2/broken.sym"
+                                         make_test get_realpath  "broken symlink" "foo/bar2/broken.sym" "foo/bar1/broken.phys"
 
-                        set_logical=true make_test get_dirname  "broken symlink" "foo/bar2/broken.sym" "foo/bar2"
-                                         make_test get_dirname  "broken symlink" "foo/bar2/broken.sym" "foo/bar1"
+                        set_logical=true make_test get_dirname   "broken symlink" "foo/bar2/broken.sym" "foo/bar2"
+                                         make_test get_dirname   "broken symlink" "foo/bar2/broken.sym" "foo/bar1"
 
-                        set_logical=true make_test get_filename "broken symlink" "foo/bar2/broken.sym" "broken.sym"
-                                         make_test get_filename "broken symlink" "foo/bar2/broken.sym" "broken.phys"
+                        set_logical=true make_test get_filename  "broken symlink" "foo/bar2/broken.sym" "broken.sym"
+                                         make_test get_filename  "broken symlink" "foo/bar2/broken.sym" "broken.phys"
 
-                        set_logical=true make_test get_stemname "broken symlink" "foo/bar2/broken.sym" "broken"
-                                         make_test get_stemname "broken symlink" "foo/bar2/broken.sym" "broken"
+                        set_logical=true make_test get_stemname  "broken symlink" "foo/bar2/broken.sym" "broken"
+                                         make_test get_stemname  "broken symlink" "foo/bar2/broken.sym" "broken"
+
+                        set_logical=true make_test get_extension "broken symlink" "foo/bar2/broken.sym" "sym"
+                                         make_test get_extension "broken symlink" "foo/bar2/broken.sym" "phys"
 
         echo | $tee_stderr
         echo "### Logical and physical paths from 'foo/' for files that are not symlinks ####" | $tee_stderr
+ 
+                        set_logical=true make_test get_realpath  "ordinary file" "foo/bar1/baz.phys" "foo/bar1/baz.phys"
+                                         make_test get_realpath  "ordinary file" "foo/bar1/baz.phys" "foo/bar1/baz.phys"
+                        set_logical=true make_test get_realpath  "ordinary file" "foo/bar1/foo->baz.phys" "foo/bar1/foo->baz.phys"
+                                         make_test get_realpath  "ordinary file" "foo/bar1/foo->baz.phys" "foo/bar1/foo->baz.phys"
 
-                        set_logical=true make_test get_realpath "ordinary file" "foo/bar1/baz.phys" "foo/bar1/baz.phys"
-                                         make_test get_realpath "ordinary file" "foo/bar1/baz.phys" "foo/bar1/baz.phys"
-                        set_logical=true make_test get_realpath "ordinary file" "foo/bar1/foo->baz.phys" "foo/bar1/foo->baz.phys"
-                                         make_test get_realpath "ordinary file" "foo/bar1/foo->baz.phys" "foo/bar1/foo->baz.phys"
+                        set_logical=true make_test get_dirname   "ordinary file" "foo/bar1/baz.phys" "foo/bar1"
+                                         make_test get_dirname   "ordinary file" "foo/bar1/baz.phys" "foo/bar1"
+                        set_logical=true make_test get_dirname   "ordinary file" "foo/bar1/foo->baz.phys" "foo/bar1"
+                                         make_test get_dirname   "ordinary file" "foo/bar1/foo->baz.phys" "foo/bar1"
 
-                        set_logical=true make_test get_dirname  "ordinary file" "foo/bar1/baz.phys" "foo/bar1"
-                                         make_test get_dirname  "ordinary file" "foo/bar1/baz.phys" "foo/bar1"
-                        set_logical=true make_test get_dirname  "ordinary file" "foo/bar1/foo->baz.phys" "foo/bar1"
-                                         make_test get_dirname  "ordinary file" "foo/bar1/foo->baz.phys" "foo/bar1"
+                        set_logical=true make_test get_filename  "ordinary file" "foo/bar1/baz.phys" "baz.phys"
+                                         make_test get_filename  "ordinary file" "foo/bar1/baz.phys" "baz.phys"
+                        set_logical=true make_test get_filename  "ordinary file" "foo/bar1/foo->baz.phys" "foo->baz.phys"
+                                         make_test get_filename  "ordinary file" "foo/bar1/foo->baz.phys" "foo->baz.phys"
 
-                        set_logical=true make_test get_filename "ordinary file" "foo/bar1/baz.phys" "baz.phys"
-                                         make_test get_filename "ordinary file" "foo/bar1/baz.phys" "baz.phys"
-                        set_logical=true make_test get_filename "ordinary file" "foo/bar1/foo->baz.phys" "foo->baz.phys"
-                                         make_test get_filename "ordinary file" "foo/bar1/foo->baz.phys" "foo->baz.phys"
+                        set_logical=true make_test get_stemname  "ordinary file" "foo/bar1/baz.phys" "baz"
+                                         make_test get_stemname  "ordinary file" "foo/bar1/baz.phys" "baz"
+                        set_logical=true make_test get_stemname  "ordinary file" "foo/bar1/foo->baz.phys" "foo->baz"
+                                         make_test get_stemname  "ordinary file" "foo/bar1/foo->baz.phys" "foo->baz"
 
-                        set_logical=true make_test get_stemname "ordinary file" "foo/bar1/baz.phys" "baz"
-                                         make_test get_stemname "ordinary file" "foo/bar1/baz.phys" "baz"
-                        set_logical=true make_test get_stemname "ordinary file" "foo/bar1/foo->baz.phys" "foo->baz"
-                                         make_test get_stemname "ordinary file" "foo/bar1/foo->baz.phys" "foo->baz"
+                        set_logical=true make_test get_extension "ordinary file" "foo/bar1/baz.phys" "phys"
+                                         make_test get_extension "ordinary file" "foo/bar1/baz.phys" "phys"
+                        set_logical=true make_test get_extension "ordinary file" "foo/bar1/foo->baz.phys" "phys"
+                                         make_test get_extension "ordinary file" "foo/bar1/foo->baz.phys" "phys"
 
         echo | $tee_stderr
         echo "### Circular references, paths from 'foo/' for files that are symlinks ########" | $tee_stderr
  
-                        set_logical=true make_test get_realpath "circular ref" "foo/bar1/foo->bar1.sym" "foo/bar1/foo->bar1.sym"
-                                         make_test get_realpath "circular ref" "foo/bar1/foo->bar1.sym" "Error Code 6"
-                        set_logical=true make_test get_realpath "circular ref" "foo/bar2/foo->bar2.sym" "foo/bar2/foo->bar2.sym"
-                                         make_test get_realpath "circular ref" "foo/bar2/foo->bar2.sym" "Error Code 6"
+                        set_logical=true make_test get_realpath  "circular ref" "foo/bar1/foo->bar1.sym" "foo/bar1/foo->bar1.sym"
+                                         make_test get_realpath  "circular ref" "foo/bar1/foo->bar1.sym" "Error Code 6"
+                        set_logical=true make_test get_realpath  "circular ref" "foo/bar2/foo->bar2.sym" "foo/bar2/foo->bar2.sym"
+                                         make_test get_realpath  "circular ref" "foo/bar2/foo->bar2.sym" "Error Code 6"
 
-                        set_logical=true make_test get_dirname  "circular ref" "foo/bar1/foo->bar1.sym" "foo/bar1"
-                                         make_test get_dirname  "circular ref" "foo/bar1/foo->bar1.sym" "Error Code 6"
-                        set_logical=true make_test get_dirname  "circular ref" "foo/bar2/foo->bar2.sym" "foo/bar2"
-                                         make_test get_dirname  "circular ref" "foo/bar2/foo->bar2.sym" "Error Code 6"
+                        set_logical=true make_test get_dirname   "circular ref" "foo/bar1/foo->bar1.sym" "foo/bar1"
+                                         make_test get_dirname   "circular ref" "foo/bar1/foo->bar1.sym" "Error Code 6"
+                        set_logical=true make_test get_dirname   "circular ref" "foo/bar2/foo->bar2.sym" "foo/bar2"
+                                         make_test get_dirname   "circular ref" "foo/bar2/foo->bar2.sym" "Error Code 6"
 
-                        set_logical=true make_test get_filename "circular ref" "foo/bar1/foo->bar1.sym" "foo->bar1.sym"
-                                         make_test get_filename "circular ref" "foo/bar1/foo->bar1.sym" "Error Code 6"
-                        set_logical=true make_test get_filename "circular ref" "foo/bar2/foo->bar2.sym" "foo->bar2.sym"
-                                         make_test get_filename "circular ref" "foo/bar2/foo->bar2.sym" "Error Code 6"
+                        set_logical=true make_test get_filename  "circular ref" "foo/bar1/foo->bar1.sym" "foo->bar1.sym"
+                                         make_test get_filename  "circular ref" "foo/bar1/foo->bar1.sym" "Error Code 6"
+                        set_logical=true make_test get_filename  "circular ref" "foo/bar2/foo->bar2.sym" "foo->bar2.sym"
+                                         make_test get_filename  "circular ref" "foo/bar2/foo->bar2.sym" "Error Code 6"
 
-                        set_logical=true make_test get_stemname "circular ref" "foo/bar1/foo->bar1.sym" "foo->bar1"
-                                         make_test get_stemname "circular ref" "foo/bar1/foo->bar1.sym" "Error Code 6"
-                        set_logical=true make_test get_stemname "circular ref" "foo/bar2/foo->bar2.sym" "foo->bar2"
-                                         make_test get_stemname "circular ref" "foo/bar2/foo->bar2.sym" "Error Code 6"
+                        set_logical=true make_test get_stemname  "circular ref" "foo/bar1/foo->bar1.sym" "foo->bar1"
+                                         make_test get_stemname  "circular ref" "foo/bar1/foo->bar1.sym" "Error Code 6"
+                        set_logical=true make_test get_stemname  "circular ref" "foo/bar2/foo->bar2.sym" "foo->bar2"
+                                         make_test get_stemname  "circular ref" "foo/bar2/foo->bar2.sym" "Error Code 6"
+
+                        set_logical=true make_test get_extension "circular ref" "foo/bar1/foo->bar1.sym" "sym"
+                                         make_test get_extension "circular ref" "foo/bar1/foo->bar1.sym" "Error Code 6"
+                        set_logical=true make_test get_extension "circular ref" "foo/bar2/foo->bar2.sym" "sym"
+                                         make_test get_extension "circular ref" "foo/bar2/foo->bar2.sym" "Error Code 6"
 
    } 2>> "$stderr_log"
 
