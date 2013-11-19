@@ -42,17 +42,18 @@ Features
 
 There are number of beneficial features:  
 
-* **Bash 4+** and only one dependency, the Posix&reg; standard **ls**!  
-* Almost complete portability across Unix systems, Mac (and Windows?)!   
-* Emulation of **readlink -f** (without readlink!) by default!  
-* No need for external dependencies basename, dirname and readlink!
-* Diagnostic investigation of symlinks, circular references, and chains!  
-* **set_strict**, ensuring targets are regular, not broken and exist!  
-* **set_logical**, for efficient determination of logical absolute paths!  
-* Test scripts to assess platform compatabiity and readlink emulation!  
-* Robust design approach with minimal side effects and exceptions thrown!  
-* Compact, efficient source that is well commented and easy to maintain!  
-* Free and open source, under the liberal terms of the **MIT license**!  
+* **Bash 4+** and only one dependency, the Posix&reg; standard **ls**.  
+* Almost complete portability across Unix systems, Mac (and Windows?).   
+* Emulation of **readlink -f** (without readlink!) by default.  
+* No need for external dependencies basename, dirname or readlink.
+* Diagnostic investigation of symlinks, circular references, and chains.  
+* **set_strict**, ensuring targets are regular, not broken and exist.  
+* **set_logical**, for efficient determination of logical absolute paths.  
+* Test scripts to assess platform compatabiity and readlink emulation.  
+* Robust design approach, minimal side effects with custom environments.  
+* Exception system that throws exit status and suggests solutions.  
+* Compact, efficient source that is well commented and easy to maintain.  
+* Free and open source, under the liberal terms of the **MIT license**.  
   
 The path argument can be provided as a local file name, relative path or an
 absolute path.  It permits symlinks to be resolved by default by emulating
@@ -312,7 +313,14 @@ type given so you must use it at your own risk.
 Closure
 =======
 
-We hope that you find this Bash library to be of value.  Should you have any
-comments or suggestions for improvement please let us know at
-dv@angb.co.  
+We are interested in the user experience with this library.  If you wish, 
+contact us to let us know if it works for your platform.  
+  
+We can be contacted by email (as below) or you may start an issue thread 
+that provides the results of your tests if you wish.  We'll try to address
+your concerns.  
+  
+We hope that you find this Bash library to be of value.  Should you decide to 
+use it on your project, or should you have any comments or suggestions for
+improvement, please contact us at dv@angb.co.  
 
