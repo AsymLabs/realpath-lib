@@ -12,6 +12,7 @@ Core functions are:
 >get_dirname  
 >get_filename  
 >get_stemname  
+>get_extension
 >validate_realpath  
 
 **realpath-lib** was inspired in part by realpath tools that are available in
@@ -44,6 +45,7 @@ There are number of beneficial features:
 * **Bash 4+** and only one dependency, the Posix&reg; standard **ls**!  
 * Almost complete portability across Unix systems, Mac (and Windows?)!   
 * Emulation of **readlink -f** (without readlink!) by default!  
+* No need for external dependencies basename, dirname and readlink!
 * Diagnostic investigation of symlinks, circular references, and chains!  
 * **set_strict**, ensuring targets are regular, not broken and exist!  
 * **set_logical**, for efficient determination of logical absolute paths!  
@@ -67,11 +69,11 @@ The following functions will resolve the path argument to a full absolute path
 string (if it exists) and throw a status condition of **0 for success** or
 **1 to 7 for failure** - meaning they can be used for testing purposes too.  
   
->get_realpath 'path-arg'  
->get_dirname 'path-arg'  
->get_filename 'path-arg'  
->get_stemname 'path-arg'  
->  
+>get_realpath  'path-arg'  
+>get_dirname   'path-arg'  
+>get_filename  'path-arg'  
+>get_stemname  'path-arg'
+>get_extension 'path-arg'  
   
 where **path-arg** can be a local file, a relative path or absolute path.  
   
@@ -179,12 +181,14 @@ using **realpath-lib** on your system.
 The following is an excerpt from the test output (stdout) of **make-generic-test.sh**:  
 
     ### Circular references, paths from 'foo/' for files that are symlinks ########
-    Try get_realpath circular ref foo/bar1/foo->bar1.sym   [set_logical=true]  Pass
-    Try get_realpath circular ref foo/bar1/foo->bar1.sym   [set_logical=    ]  Pass
-    Try get_realpath circular ref foo/bar2/foo->bar2.sym   [set_logical=true]  Pass
-    Try get_realpath circular ref foo/bar2/foo->bar2.sym   [set_logical=    ]  Pass
-    Try get_dirname  circular ref foo/bar1/foo->bar1.sym   [set_logical=true]  Pass
-    Try get_dirname  circular ref foo/bar1/foo->bar1.sym   [set_logical=    ]  Pass
+    Try get_realpath   circular ref foo/bar1/foo->bar1.sym   set_logical=true  Pass
+    Try get_realpath   circular ref foo/bar1/foo->bar1.sym   set_logical=      Pass
+    Try get_realpath   circular ref foo/bar2/foo->bar2.sym   set_logical=true  Pass
+    Try get_realpath   circular ref foo/bar2/foo->bar2.sym   set_logical=      Pass
+    Try get_dirname    circular ref foo/bar1/foo->bar1.sym   set_logical=true  Pass
+    Try get_dirname    circular ref foo/bar1/foo->bar1.sym   set_logical=      Pass
+    Try get_extension  circular ref foo/bar1/foo->bar1.sym   set_logical=true  Pass
+    Try get_extension  circular ref foo/bar1/foo->bar1.sym   set_logical=      Pass
     ....  
 
 The following is an excerpt from the error output (stderr) of **make-generic-test.sh**:   
@@ -274,8 +278,8 @@ The library is designed with private and interface methods in mind.  The
 function **get_realpath** is the core function for the system and the
 only function that is permitted to emit error messages and status.  The
 other interface functions are wrappers that simply pass through the return
-status of **get_realpath**.  So it is possible to do the following and
-get the same result:  
+status of **get_realpath**.  So it is possible to do the following (as a
+contrived example) and expect consistent results:  
 
     get_realpath 'path'  
     get_stemname 'path'  
@@ -283,8 +287,8 @@ get the same result:
     get_realpath "$(get_realpath 'path')"  
     get_stemname "$(get_realpath "$(get_realpath 'path')")"  
   
-although the last three will not be as efficient as the first two and are
-not recommended.  
+The last three examples will not be as efficient as the first two and are
+not recommended, but the robust nature is illustrated.  
   
 The non-zero status conditions are not necessarily errors.  For example,
 **readlink -f** returns nothing if a circular reference is encountered.
