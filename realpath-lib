@@ -28,19 +28,22 @@
 #
 # </path/to/source.ext> an absolute path, a relative path or a local file.
 #
-# get_realpath </path/to/source.ext> : returns the file path of a file.
-# get_dirname  </path/to/source.ext> : returns the directory of a file.
-# get_filename </path/to/source.ext> : returns the file name of a path.*
-# get_stemname </path/to/source.ext> : returns the stem name of a path.**
-#
+# get_realpath  </path/to/source.ext> : returns the file path of a file.
+# get_dirname   </path/to/source.ext> : returns the directory of a file.
+# get_filename  </path/to/source.ext> : returns the file name of a path.*
+# get_stemname  </path/to/source.ext> : returns the stem name of a path.**
+# get_extension </path/to/source.ext> : returns the stem name of a path.***
+
 # The following function succeeds or exits execution.  Use with care.
 #
-# validate_realpath </path/to/source.ext> : returns nothing, exits on error.***
+# validate_realpath </path/to/source.ext> : returns nothing, exits on error.****
 #
-# *  the filename is the file name and extension eg. 'source.ext'.
-# ** the stemname is the file name without the extension eg. 'source'. Note
-#    that a file name such as 'source.tar.gz' will be returned as 'source'.
-# ***WARNING: using validate_path at shell level will kill the shell!
+# *    the filename is the file name and extension eg. 'source.ext'.
+# **   the stemname is the file name without the extension eg. 'source'. Note
+#      that a file name such as 'source.tar.gz' will be returned as 'source'.
+# ***  the extension is the full extension string of the file name eg. ext.
+#      Note that 'source.tar.gz' will return the extension 'tar.gz'.
+# **** WARNING: using validate_path at shell level will kill the shell!
 #
 # How to test return values:
 #
@@ -69,12 +72,13 @@
 # Updated by G R Summers Fri 15 Nov 2013 10:58:48 GMT
 # Updated by G R Summers Sun 17 Nov 2013 11:33:36 GMT
 # Updated by G R Summers Mon 18 Nov 2013 21:25:55 GMT
+# Updated by G R Summers Tue 19 Nov 2013 10:10:47 GMT
 
 #### DO NOT ALTER THESE SETTINGS!
 
 # RPL_VERSION.  This is used for testing and identification purposes and should 
 # not be altered.
-readonly RPL_VERSION='2013.11.18.01'
+readonly RPL_VERSION='2013.11.19.00'
 
 # RPL_SYMLINK_LIMIT.  This is the symlink recusion limit that overrides the 
 # custom environment setting of $set_max_depth that follows and should
@@ -195,6 +199,15 @@ function _stem(){
     }
 }
 
+# _extn "path/to/file" : print extension of a given path (private function).
+function _extn(){
+    [[ -n "$1" ]] && {
+        local _name="$(_file "$1")"
+        local _stem="${_name%%.*}"
+        printf '%s' "${_name#*"${_stem}."}"
+    }
+}
+
 # _directory "path/to/file" : get the directory of a path (private function)
 function _directory(){
     [[ -n "$1" ]] && printf '%s' "${1%/*}"
@@ -214,7 +227,7 @@ function get_dirname(){
     local _path _code
     _path="$(get_realpath "$1")"
     _code=$? # capture status
-    (( $_code )) && return $_code || _directory "$_path"
+    (( $_code )) && return $_code || echo "$( _directory "$_path" )"
 }
 
 # get_filename "path/to/file" : gets a file name from a path to file. Pass
@@ -224,7 +237,7 @@ function get_filename(){
     local _path _code
     _path="$(get_realpath "$1")"
     _code=$? # capture status
-    (( $_code )) && return $_code || _file "$_path"
+    (( $_code )) && return $_code || echo "$( _file "$_path" )"
 }
 
 # get_stemname "path/to/file" : gets a stem name (removes directory and 
@@ -234,7 +247,17 @@ function get_stemname(){
     local _path _code 
     _path="$(get_realpath "$1")"
     _code=$? # capture status
-    (( $_code )) && return $_code || _stem "$_path"
+    (( $_code )) && return $_code || echo "$( _stem "$_path" )"
+}
+
+# get_extension "path/to/file" : gets a file extenion (removes directory 
+# and stem name).  Pass return condition from get_realpath.
+function get_extension(){
+    # declare locals before assignment!
+    local _path _code
+    _path="$(get_realpath "$1")"
+    _code=$? # capture status
+    (( $_code )) && return $_code || echo "$( _extn "$_path" )"
 }
 
 # validate_realpath "path/to/file" : dies on any non-zero error state.
@@ -299,8 +322,8 @@ function get_realpath(){
 
             # Check that ls exists or throw.
             hash ls || {
-                _log_error 7                               # emit error 7.
-                return 7                                   # throw status 7.
+                _log_error 7                           # emit error 7.
+                return 7                               # throw status 7.
             }
 
             # Recurse through link chain.
