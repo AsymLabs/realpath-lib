@@ -39,81 +39,166 @@
         </div>
 
         <h1>
-<a name="introduction" class="anchor" href="#introduction"><span class="octicon octicon-link"></span></a>Introduction</h1>
+<a name="realpath-lib" class="anchor" href="#realpath-lib"><span class="octicon octicon-link"></span></a>realpath-lib</h1>
 
-<p>The lightweight and simple Bash library <code>realpath-lib</code> provides functions that
-can resolve the full path associated with a file name.   These functions are:  </p>
+<p>The lightweight and simple Bash library <strong>realpath-lib</strong> provides functions that
+can resolve the full path associated with symlinks and file names.  There are 
+several environments available but by default the function <strong>get_realpath</strong> will
+emulate the popular, but often not available, command utility <strong>readlink -f</strong>.  </p>
+
+<p>Core functions are:  </p>
 
 <blockquote>
 <p>get_realpath<br>
 get_dirname<br>
 get_filename<br>
 get_stemname<br>
+get_extension<br>
 validate_realpath  </p>
 </blockquote>
 
-<p><code>realpath-lib</code> was inspired in part by realpath tools that are available in other
-programming languages.  We are not aware of a Bash specific version that does not
-require external or other platform specific dependencies.  This is pure Bash. It
-just works.  </p>
+<p><strong>realpath-lib</strong> was inspired in part by realpath tools that are available in
+other programming languages.  This script illustrates that path processing 
+can be done in Bash with minimal dependencies. This script requires only the 
+widely used Posix® compliant standard utility <strong>ls</strong> to resolve symlinked
+file names only.  </p>
 
-<h3>
-<a name="motivation" class="anchor" href="#motivation"><span class="octicon octicon-link"></span></a>Motivation</h3>
+<p>Although we have not tested this script widely, it should work across most, if
+not all, Unix systems and variants.  </p>
+
+<h1>
+<a name="motivation" class="anchor" href="#motivation"><span class="octicon octicon-link"></span></a>Motivation</h1>
 
 <p>Recent work writing scripts that should function the same way across Mac, Linux
 and Windows has revealed that certain system/Bash tools are not available for
-all platforms.  Quite often the standard way of resolving file names, such as
-the use of <em>basename</em>, <em>readlink</em> or others has led to portability problems.  </p>
+all platforms. Quite often the recommended way of resolving file names is to use
+utilities such as <em>readlink</em>, <em>basename</em>, <em>dirname</em> or perhaps others that have 
+often led to portability issues.  </p>
 
-<p>For this reason we have prepared this set of tools for use in Bash scripts.  It
-uses only simple built-in features and should not require anything else.   </p>
-
-<h3>
-<a name="dependencies" class="anchor" href="#dependencies"><span class="octicon octicon-link"></span></a>Dependencies</h3>
-
-<p>Bash 4+ and nothing else.  This could be revised to work with earlier versions
-but we leave this as an exercise for others.  </p>
+<p>For this reason we have prepared this set of tools for use in Bash scripts with
+only simple built-in features and one widely available Posix® standard utility
+<strong>ls</strong>.  </p>
 
 <h1>
 <a name="features" class="anchor" href="#features"><span class="octicon octicon-link"></span></a>Features</h1>
 
-<p>The path argument can be provided as a local file name, relative path or an
-absolute path.  It should permit symlinks by default but we have not yet verified
-this across platforms.  Functions are classified into two groups: getters and
-validators.  </p>
+<p>There are number of beneficial features:  </p>
 
-<p>You can also ensure that symlinks are avoided (physical system only) by setting
-the environment near the beginning of the script.  </p>
+<ul>
+<li>
+<strong>Bash 4+</strong> and only one dependency, the Posix® standard <strong>ls</strong>.<br>
+</li>
+<li>Almost complete portability across Unix systems, Mac (and Windows?).<br>
+</li>
+<li>Emulation of <strong>readlink -f</strong> (without readlink!) by default.<br>
+</li>
+<li>No need for external dependencies basename, dirname or readlink.</li>
+<li>Diagnostic investigation of symlinks, circular references, and chains.<br>
+</li>
+<li>
+<strong>set_strict</strong>, ensuring targets are regular, not broken and exist.<br>
+</li>
+<li>
+<strong>set_logical</strong>, for efficient determination of logical absolute paths.<br>
+</li>
+<li>Test scripts to assess platform compatabiity and readlink emulation.<br>
+</li>
+<li>Robust design approach, minimal side effects with custom environments.<br>
+</li>
+<li>Exception system that throws exit status and suggests solutions.<br>
+</li>
+<li>Compact, efficient source that is well commented and easy to maintain.<br>
+</li>
+<li>Free and open source, under the liberal terms of the <strong>MIT license</strong>.<br>
+</li>
+</ul><p>The path argument can be provided as a local file name, relative path or an
+absolute path.  It permits symlinks to be resolved by default by emulating
+<strong>readlink -f</strong>.  Interface methods are classified into two groups: getters
+and validators.  </p>
 
-<h3>
-<a name="getters" class="anchor" href="#getters"><span class="octicon octicon-link"></span></a>Getters</h3>
+<p>There are a number of environments that are summarized under the section 
+that follows.  These are also explained in detail in the source code file.  </p>
+
+<h2>
+<a name="getters" class="anchor" href="#getters"><span class="octicon octicon-link"></span></a>Getters</h2>
 
 <p>The following functions will resolve the path argument to a full absolute path
-string (if it is found) and return an exit condition of <strong>0 for success</strong> and 
-<strong>1 for failure</strong> - meaning they can be used for testing purposes too.  </p>
+string (if it exists) and throw a status condition of <strong>0 for success</strong> or
+<strong>1 to 7 for failure</strong> - meaning they can be used for testing purposes too.  </p>
 
 <blockquote>
-<p>get_realpath 'path-arg'<br>
-get_dirname 'path-arg'<br>
-get_filename 'path-arg'<br>
-get_stemname 'path-arg'  </p>
-
-<p>where <strong>path-arg</strong> can be a local file, a relative path or absolute path.   </p>
+<p>get_realpath  'path-arg'<br>
+get_dirname   'path-arg'<br>
+get_filename  'path-arg'<br>
+get_stemname  'path-arg'<br>
+get_extension 'path-arg'  </p>
 </blockquote>
 
-<h3>
-<a name="validators" class="anchor" href="#validators"><span class="octicon octicon-link"></span></a>Validators</h3>
+<p>where <strong>path-arg</strong> can be a local file, a relative path or absolute path.  </p>
 
-<p>The function <code>validate_realpath</code> will return an exit condition of <strong>0 for success</strong>
+<h2>
+<a name="validators" class="anchor" href="#validators"><span class="octicon octicon-link"></span></a>Validators</h2>
+
+<p>The function <strong>validate_realpath</strong> will throw a status condition of <strong>0 for success</strong>
 or will <strong>abort on failure</strong>.  This leads us to the following warning: <strong>do not
-use validate_realpath at the top level of your shell - as a failure to validate will
-kill it and any sub-processes!</strong>  </p>
+use validate_realpath at the top level of your shell - as a failure to validate
+will kill the shell and any sub-processes!</strong>  </p>
 
 <blockquote>
 <p>validate_realpath 'path-arg'  </p>
+</blockquote>
 
 <p>where <strong>path-arg</strong> is the same as above.  </p>
+
+<h2>
+<a name="environment" class="anchor" href="#environment"><span class="octicon octicon-link"></span></a>Environment</h2>
+
+<p>There are three settable environments (default values are shown):  </p>
+
+<blockquote>
+<p>set_strict=<br>
+set_logical=<br>
+set_max_depth=5  </p>
 </blockquote>
+
+<p>As indicated previously, the default (out of the box) settings are done to emulate
+the command <strong>readlink -f</strong>.  Another interesting feature of the default settings
+is that the chain of symlinks for a given path can be unwound where an error is
+thrown - useful for diagnostic purposes.  Capture stderr to view this information.
+The test scripts are illustrative.  </p>
+
+<p><strong>set_strict</strong>: setting this environment enforces strict checking of target paths.
+A path must exist and must lead to a regular file, a symlink target must exist,
+and a symlink cannot be broken.  This is at odds with the command <strong>readlink -f</strong>.  </p>
+
+<p>Note that a given system may have system limits on link recursion.  So invoking
+the environment <strong>set_strict</strong> may lead to an unspecified error where very
+deep symlink chains exist.</p>
+
+<p><strong>set_logical</strong>: setting this environment will see that symlinked files will not be 
+resolved to the physical system.  This is at odds with the command <strong>readlink -f</strong>.  </p>
+
+<p>Note that the environment <strong>set_max_depth</strong> is not used nor will symlink chains
+be assessed when <strong>set_logical</strong> is invoked.</p>
+
+<p><strong>set_max_depth</strong>: setting this environment controls the depth of symlink recursion.
+Recursion exits on three conditions: 1) when a duplicate reference occcurs (as a
+circular reference), 2) when the set_max_depth is reached, or 3) when the built-in
+internal limit (40) is reached, whichever occurs first.  So if the set_max_depth
+is set to greater than 40, it will be disregarded, and 40 shall be enforced.  Of
+course this limit can be changed, but will require modification of the source.</p>
+
+<h2>
+<a name="dependencies" class="anchor" href="#dependencies"><span class="octicon octicon-link"></span></a>Dependencies</h2>
+
+<p>Dependencies are Bash 4+, Posix® standard <strong>ls</strong> and nothing else. This
+could be refactored to work with earlier Bash versions but we leave this as 
+an exercise for others.  </p>
+
+<p>Where the dependency <strong>ls</strong> is required but cannot be found (only in the 
+special case where symlinks are files, it is not needed to resolve directory
+symlinks), the script will throw a non-zero status and exit with a message 
+to stderr.  </p>
 
 <h1>
 <a name="usage" class="anchor" href="#usage"><span class="octicon octicon-link"></span></a>Usage</h1>
@@ -121,70 +206,170 @@ kill it and any sub-processes!</strong>  </p>
 <p>This is not a Bash executable.  Source it at the beginning of your executable
 script with:  </p>
 
-<div class="highlight highlight-bash"><pre><span class="nb">source</span> <span class="s1">'/your/path/to/realpath-lib'</span>
-</pre></div>
+<pre><code>source '/your/path/to/realpath-lib'
+</code></pre>
 
-<p>To avoid symlinks completely (use the physical system), uncomment <code>no_symlinks</code>
-under <strong>Environment</strong> near the beginning of the script.  </p>
+<p>As indicated previously, the default setting is to emulate the command utility 
+<strong>readlink -f</strong>. Environment settings can be incorporated within your script or
+inline as:</p>
 
-<p>That's it.</p>
+<pre><code>get_realpath 'path-arg' # emulate readlink -f, traverse a link chain of 5  
+set_strict=true set_logical=true set_max_depth=20 get_realpath 'path-arg'  
+set_strict=     set_logical=true set_max_depth=10 get_stemname 'path-arg'  
+</code></pre>
+
+<p>and so on.  </p>
+
+<h1>
+<a name="test-scripts" class="anchor" href="#test-scripts"><span class="octicon octicon-link"></span></a>Test Scripts</h1>
+
+<p>Two test scripts have been added that were developed following an issue
+thread of November 2013 that can be found 
+<a href="https://github.com/AsymLabs/realpath-lib/issues/1">here</a>.  </p>
+
+<p>The scripts are: 1) <strong>make-generic-test.sh</strong> and 2) <strong>make-readlink-test.sh</strong>.
+The <strong>generic</strong> test script can be used to test the script on a specific system,
+whereas the <strong>readlink</strong> script can be used to assess the library against the 
+<strong>readlink</strong> command if it is available on your system.  The scripts can also 
+be used to gain a better understanding of realpath-lib.  </p>
+
+<p>As part of tests, a directory and subdirectories are created that are traversed
+in order to test such things as chained symlinks, symlinks of circular 
+reference, broken symlinks, non-existent symlinks or files and others. A tree
+for this found in the source code files.  It can also be examined by the 
+command <strong>tree foo</strong> after running the script.</p>
+
+<p>Both scripts will produce a uniquely stamped test log and error log that will be
+displayed upon completion.  These can be used for diagnostic purposes on any
+given Bash system.  The logs can be supplied to us should you have problems
+using <strong>realpath-lib</strong> on your system.  </p>
+
+<p>The following is an excerpt from the test output (stdout) of <strong>make-generic-test.sh</strong>:  </p>
+
+<pre><code>### Circular references, paths from 'foo/' for files that are symlinks ########
+Try get_realpath   circular ref foo/bar1/foo-&gt;bar1.sym   set_logical=true  Pass
+Try get_realpath   circular ref foo/bar1/foo-&gt;bar1.sym   set_logical=      Pass
+Try get_realpath   circular ref foo/bar2/foo-&gt;bar2.sym   set_logical=true  Pass
+Try get_realpath   circular ref foo/bar2/foo-&gt;bar2.sym   set_logical=      Pass
+Try get_dirname    circular ref foo/bar1/foo-&gt;bar1.sym   set_logical=true  Pass
+Try get_dirname    circular ref foo/bar1/foo-&gt;bar1.sym   set_logical=      Pass
+Try get_extension  circular ref foo/bar1/foo-&gt;bar1.sym   set_logical=true  Pass
+Try get_extension  circular ref foo/bar1/foo-&gt;bar1.sym   set_logical=      Pass
+....  
+</code></pre>
+
+<p>The following is an excerpt from the error output (stderr) of <strong>make-generic-test.sh</strong>:   </p>
+
+<pre><code>### Circular references, paths from 'foo/' for files that are symlinks ########
+L [00] -&gt; /home/user/realpath-test/foo/bar2/foo-&gt;bar2.sym
+L [01] -&gt; /home/user/realpath-test/foo/bar1/foo-&gt;bar1.sym
+L [02] -&gt; /home/user/realpath-test/foo/bar2/foo-&gt;bar2.sym
+E [06] Symlink circular reference issue has been detected ...
+-----&gt; Symlink circular reference should be investigated manually ...
+L [00] -&gt; /home/user/realpath-test/foo/bar1/foo-&gt;bar1.sym
+L [01] -&gt; /home/user/realpath-test/foo/bar2/foo-&gt;bar2.sym
+L [02] -&gt; /home/user/realpath-test/foo/bar1/foo-&gt;bar1.sym
+E [06] Symlink circular reference issue has been detected ...
+-----&gt; Symlink circular reference should be investigated manually ...
+L [00] -&gt; /home/user/realpath-test/foo/bar2/foo-&gt;bar2.sym
+L [01] -&gt; /home/user/realpath-test/foo/bar1/foo-&gt;bar1.sym
+L [02] -&gt; /home/user/realpath-test/foo/bar2/foo-&gt;bar2.sym
+E [06] Symlink circular reference issue has been detected ...
+-----&gt; Symlink circular reference should be investigated manually ...
+...  
+</code></pre>
+
+<p>Where:  </p>
+
+<pre><code>L [..] denotes the link (shallow to deep).   
+E [..] denotes the error message emitted.  
+-----&gt; denotes a possible solution.  
+</code></pre>
 
 <h1>
 <a name="examples" class="anchor" href="#examples"><span class="octicon octicon-link"></span></a>Examples</h1>
 
 <p>To use the 'getters' for testing purposes, do something like:  </p>
 
-<div class="highlight highlight-bash"><pre>get_realpath <span class="s2">"$1"</span> &amp;&gt;/dev/null
-<span class="k">if</span> <span class="o">((</span> <span class="nv">$?</span> <span class="o">))</span>  <span class="c"># true when non-zero.</span>
-<span class="k">then</span>
-    <span class="c"># Do failure actions. </span>
-    <span class="k">return </span>1 <span class="c"># Failure. </span>
-<span class="k">fi</span>
-</pre></div>
+<pre><code>get_realpath "$1" &amp;&gt;/dev/null
+if (( $? ))  # true when non-zero.
+then
+    # Do failure actions. 
+    return 1 # Failure. 
+fi
+</code></pre>
 
 <p>While these are designed to be used exclusively in scripts, some top level shell
 examples are:  </p>
 
-<blockquote>
-<p>[user@a52j MyLib]$ ls '/home/user/MyLib/archive.tar.gz'<br>
-/home/user/MyLib/archive.tar.gz  </p>
+<pre><code>[user@host MyLib]$ ls '/home/user/MyLib/archive.tar.gz'  
+/home/user/MyLib/archive.tar.gz  
 
-<p>[user@a52j MyLib]$ source realpath-lib<br>
-[user@a52j MyLib]$  </p>
+[user@host MyLib]$ source realpath-lib  
+[user@host MyLib]$  
 
-<p>[user@a52j MyLib]$ get_realpath 'archive.tar.gz'<br>
-/home/user/MyLib/archive.tar.gz  </p>
+[user@host MyLib]$ get_realpath 'archive.tar.gz'  
+/home/user/MyLib/archive.tar.gz  
 
-<p>[user@a52j MyLib]$ get_dirname 'archive.tar.gz'<br>
-/home/user/MyLib  </p>
+[user@host MyLib]$ get_dirname 'archive.tar.gz'  
+/home/user/MyLib  
 
-<p>[user@a52j MyLib]$ get_filename 'archive.tar.gz'<br>
-archive.tar.gz  </p>
+[user@host MyLib]$ get_filename 'archive.tar.gz'  
+archive.tar.gz  
 
-<p>[user@a52j MyLib]$ get_stemname 'archive.tar.gz'<br>
-archive  </p>
+[user@host MyLib]$ get_stemname 'archive.tar.gz'  
+archive  
 
-<p>[user@a52j MyLib]$ validate_realpath 'archive.tar.gz'<br>
-[user@a52j MyLib]$  </p>
+[user@host MyLib]$ validate_realpath 'archive.tar.gz'  
+[user@host MyLib]$  
 
-<p>[user@a52j MyLib]$ cd ../Templates<br>
-[user@a52j Templates]$  </p>
+[user@host MyLib]$ cd ../Templates  
+[user@host Templates]$  
 
-<p>[user@a52j Templates]$ get_realpath '../MyLib/archive.tar.gz'<br>
-/home/user/MyLib/archive.tar.gz  </p>
+[user@host Templates]$ get_realpath '../MyLib/archive.tar.gz'  
+/home/user/MyLib/archive.tar.gz  
 
-<p>[user@a52j Templates]$ get_dirname '../MyLib/archive.tar.gz'<br>
-/home/user/MyLib  </p>
+[user@host Templates]$ get_dirname '../MyLib/archive.tar.gz'  
+/home/user/MyLib  
 
-<p>[user@a52j Templates]$ get_filename '../MyLib/archive.tar.gz'<br>
-archive.tar.gz  </p>
+[user@host Templates]$ get_filename '../MyLib/archive.tar.gz'  
+archive.tar.gz  
 
-<p>[user@a52j Templates]$ get_stemname '../MyLib/archive.tar.gz'<br>
-archive  </p>
+[user@host Templates]$ get_stemname '../MyLib/archive.tar.gz'  
+archive  
 
-<p>[user@a52j Templates]$ validate_realpath '../MyLib/archive.tar.gz'<br>
-[user@a52j Templates]$  </p>
-</blockquote>
+[user@host Templates]$ validate_realpath '../MyLib/archive.tar.gz'  
+[user@host Templates]$  
+</code></pre>
+
+<h1>
+<a name="design" class="anchor" href="#design"><span class="octicon octicon-link"></span></a>Design</h1>
+
+<p>The library is designed with private and interface methods in mind.  The 
+function <strong>get_realpath</strong> is the core function for the system and the
+only function that is permitted to emit error messages and status.  The
+other interface functions are wrappers that simply pass through the return
+status of <strong>get_realpath</strong>.  So it is possible to do the following (as a
+contrived example) and expect consistent results:  </p>
+
+<pre><code>get_realpath 'path'  
+get_stemname 'path'  
+get_stemname "$(get_realpath 'path')"  
+get_realpath "$(get_realpath 'path')"  
+get_stemname "$(get_realpath "$(get_realpath 'path')")"  
+</code></pre>
+
+<p>The last three examples will not be as efficient as the first two and are
+not recommended, but the robust nature is illustrated.  </p>
+
+<p>The non-zero status conditions are not necessarily errors.  For example,
+<strong>readlink -f</strong> returns nothing if a circular reference is encountered.
+This condition will throw a status 3 under <strong>get_realpath</strong> but this is
+not an error.  It is intentional behaviour by default.  </p>
+
+<p>Finally, we have attempted to use naming conventions that should avoid 
+collisions with other scripts.  This is not ensured, however, and care
+is required.  </p>
 
 <h1>
 <a name="terms" class="anchor" href="#terms"><span class="octicon octicon-link"></span></a>Terms</h1>
@@ -199,9 +384,16 @@ type given so you must use it at your own risk.  </p>
 <h1>
 <a name="closure" class="anchor" href="#closure"><span class="octicon octicon-link"></span></a>Closure</h1>
 
-<p>We hope that you find this Bash library to be of value.  Should you have any
-comments or suggestions for improvement please let us know at
-<a href="mailto:dv@angb.co">dv@angb.co</a>.  </p>
+<p>We are interested in the user experience with this library.  If you wish, 
+contact us to let us know if it works for your platform.  </p>
+
+<p>We can be contacted by email (as below) or you may start an issue thread 
+that provides the results of your tests if you wish.  We'll try to address
+your concerns.  </p>
+
+<p>We hope that you find this Bash library to be of value.  Should you decide to 
+use it on your project, or should you have any comments or suggestions for
+improvement, please contact us at <a href="mailto:dv@angb.co">dv@angb.co</a>.  </p>
       </section>
 
     </div>
