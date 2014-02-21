@@ -1,9 +1,9 @@
 #!/usr/bin/env bash
 
 # make-readlink-test.sh.  A test script for realpath-lib.  Use this script to
-# assess compatibility with readlink on a given operating system.  This script
-# is based upon concepts and contributions by Mikael Auno that can be found within
-# the issues thread 1 of November 2013 at:
+# assess compatibility with GNU readlink -f.  This script is based upon
+# concepts and contributions by Mikael Auno that can be found within the issues
+# thread 1 of November 2013 at:
 #
 #   https://github.com/AsymLabs/realpath-lib/issues/1 
 #
@@ -64,7 +64,6 @@ readonly stderr_log='readlink-errors-'"$suffix"
 function check_dependencies(){
  
     # Posix utilties.
-    hash readlink &&
     hash mkdir &&
     hash date &&
     hash uname &&
@@ -134,16 +133,10 @@ function make_test() {
     local _function="$1"
     local _message="$2"
     local _path="$3"
-    local _expected="$(readlink -f "$_path")"
+    local _expected="$4"
     local _result=''
     local _printf=''
 
-    # get _expected
-    if [[ "$_function" != 'get_realpath' ]]
-    then
-        _expected="$($_function "$_expected")"
-    fi
-    
     # get _result
     _result="$($_function "$_path")"
 
@@ -187,45 +180,45 @@ make_header | tee "$stdout_log" > "$stderr_log"
         # Using 'set_strict=' for all. 
         # 
         echo | $tee_stderr 
-        echo "===============================================================================" | $tee_stderr
-        echo "=     Testing 'Realpath-Lib' as default 'set_strict=' and 'set_logical='      =" | $tee_stderr
-        echo "=    (default settings will emulate the results of command 'readlink -f')     =" | $tee_stderr
-        echo "===============================================================================" | $tee_stderr
+        echo "==================================================================================" | $tee_stderr
+        echo "=     Testing 'Realpath-Lib' as default 'set_strict=' and 'set_logical='         =" | $tee_stderr
+        echo "=    (default settings will emulate the results of GNU command 'readlink -f')    =" | $tee_stderr
+        echo "==================================================================================" | $tee_stderr
         echo | $tee_stderr
 
         # Begin tests
         echo "### Logical and physical paths from 'foo/' for symlinks that exist ############" | $tee_stderr
  
-        make_test get_realpath  "existing symlink" "foo/bar3/baz.phys"
-        make_test get_realpath  "existing symlink" "foo/bar2/foobaz.sym"
-        make_test get_realpath  "existing symlink" "foo/bar2/bazbaz.sym"
+        make_test get_realpath  "existing symlink" "foo/bar3/baz.phys"   "$pwd_phys/foo/bar1/baz.phys"
+        make_test get_realpath  "existing symlink" "foo/bar2/foobaz.sym" "$pwd_phys/foo/bar1/foo->baz.phys"
+        make_test get_realpath  "existing symlink" "foo/bar2/bazbaz.sym" "$pwd_phys/foo/bar1/baz.phys"
 
-        make_test get_dirname   "existing symlink" "foo/bar3/baz.phys"
-        make_test get_dirname   "existing symlink" "foo/bar2/foobaz.sym"
-        make_test get_dirname   "existing symlink" "foo/bar2/bazbaz.sym"
+        make_test get_dirname   "existing symlink" "foo/bar3/baz.phys"   "$pwd_phys/foo/bar1"
+        make_test get_dirname   "existing symlink" "foo/bar2/foobaz.sym" "$pwd_phys/foo/bar1"
+        make_test get_dirname   "existing symlink" "foo/bar2/bazbaz.sym" "$pwd_phys/foo/bar1"
 
-        make_test get_filename  "existing symlink" "foo/bar3/baz.phys"
-        make_test get_filename  "existing symlink" "foo/bar2/foobaz.sym"
-        make_test get_filename  "existing symlink" "foo/bar2/bazbaz.sym"
+        make_test get_filename  "existing symlink" "foo/bar3/baz.phys"   "baz.phys"
+        make_test get_filename  "existing symlink" "foo/bar2/foobaz.sym" "foo->baz.phys"
+        make_test get_filename  "existing symlink" "foo/bar2/bazbaz.sym" "baz.phys"
 
-        make_test get_stemname  "existing symlink" "foo/bar3/baz.phys"
-        make_test get_stemname  "existing symlink" "foo/bar2/foobaz.sym"
-        make_test get_stemname  "existing symlink" "foo/bar2/bazbaz.sym"
+        make_test get_stemname  "existing symlink" "foo/bar3/baz.phys"   "baz"
+        make_test get_stemname  "existing symlink" "foo/bar2/foobaz.sym" "foo->baz"
+        make_test get_stemname  "existing symlink" "foo/bar2/bazbaz.sym" "baz"
 
-        make_test get_extension "existing symlink" "foo/bar3/baz.phys"
-        make_test get_extension "existing symlink" "foo/bar2/foobaz.sym"
-        make_test get_extension "existing symlink" "foo/bar2/bazbaz.sym"
+        make_test get_extension "existing symlink" "foo/bar3/baz.phys"   "phys"
+        make_test get_extension "existing symlink" "foo/bar2/foobaz.sym" "phys"
+        make_test get_extension "existing symlink" "foo/bar2/bazbaz.sym" "phys"
 
         echo | $tee_stderr
         echo "### Logical and physical paths from 'foo/bar2/' for symlinks that exist #######" | $tee_stderr
  
         cd foo/bar2 &>/dev/null
 
-        make_test get_realpath  "existing symlink" "baz.sym"
-        make_test get_dirname   "existing symlink" "baz.sym"
-        make_test get_filename  "existing symlink" "baz.sym"
-        make_test get_stemname  "existing symlink" "baz.sym"
-        make_test get_extension "existing symlink" "baz.sym"
+        make_test get_realpath  "existing symlink" "baz.sym" "$pwd_phys/foo/bar1/baz.phys"
+        make_test get_dirname   "existing symlink" "baz.sym" "$pwd_phys/foo/bar1"
+        make_test get_filename  "existing symlink" "baz.sym" "baz.phys"
+        make_test get_stemname  "existing symlink" "baz.sym" "baz"
+        make_test get_extension "existing symlink" "baz.sym" "phys"
 
         cd - &>/dev/null
 
@@ -234,64 +227,64 @@ make_header | tee "$stdout_log" > "$stderr_log"
  
         cd foo/bar3 &>/dev/null
 
-        make_test get_realpath  "existing symlink" "baz.phys"
-        make_test get_realpath  "existing symlink" "foo->baz.phys"
-        make_test get_dirname   "existing symlink" "baz.phys"
-        make_test get_dirname   "existing symlink" "foo->baz.phys"
-        make_test get_filename  "existing symlink" "baz.phys"
-        make_test get_filename  "existing symlink" "foo->baz.phys"
-        make_test get_stemname  "existing symlink" "baz.phys"
-        make_test get_stemname  "existing symlink" "foo->baz.phys"
-        make_test get_extension "existing symlink" "baz.phys"
-        make_test get_extension "existing symlink" "foo->baz.phys"
+        make_test get_realpath  "existing symlink" "baz.phys"      "$pwd_phys/foo/bar1/baz.phys"
+        make_test get_realpath  "existing symlink" "foo->baz.phys" "$pwd_phys/foo/bar1/foo->baz.phys"
+        make_test get_dirname   "existing symlink" "baz.phys"      "$pwd_phys/foo/bar1"
+        make_test get_dirname   "existing symlink" "foo->baz.phys" "$pwd_phys/foo/bar1"
+        make_test get_filename  "existing symlink" "baz.phys"      "baz.phys"
+        make_test get_filename  "existing symlink" "foo->baz.phys" "foo->baz.phys"
+        make_test get_stemname  "existing symlink" "baz.phys"      "baz"
+        make_test get_stemname  "existing symlink" "foo->baz.phys" "foo->baz"
+        make_test get_extension "existing symlink" "baz.phys"      "phys"
+        make_test get_extension "existing symlink" "foo->baz.phys" "phys"
 
         cd - &>/dev/null
 
         echo | $tee_stderr
         echo "### Logical and physical paths from 'foo/' for symlinks that do not exist #####" | $tee_stderr
  
-        make_test get_realpath  "non-existant symlink" "foo/bar2/no.foo"
-        make_test get_dirname   "non-existant symlink" "foo/bar2/no.foo"
-        make_test get_filename  "non-existant symlink" "foo/bar2/no.foo"
-        make_test get_stemname  "non-existant symlink" "foo/bar2/no.foo"
-        make_test get_extension "non-existant symlink" "foo/bar2/no.foo"
+        make_test get_realpath  "non-existant symlink" "foo/bar2/no.foo" "$pwd_phys/foo/bar2/no.foo"
+        make_test get_dirname   "non-existant symlink" "foo/bar2/no.foo" "$pwd_phys/foo/bar2"
+        make_test get_filename  "non-existant symlink" "foo/bar2/no.foo" "no.foo"
+        make_test get_stemname  "non-existant symlink" "foo/bar2/no.foo" "no"
+        make_test get_extension "non-existant symlink" "foo/bar2/no.foo" "foo"
 
         echo | $tee_stderr
         echo "### Logical and physical paths from 'foo/' for symlinks that are broken #######" | $tee_stderr
  
-        make_test get_realpath  "broken symlink" "foo/bar2/broken.sym"
-        make_test get_dirname   "broken symlink" "foo/bar2/broken.sym"
-        make_test get_filename  "broken symlink" "foo/bar2/broken.sym"
-        make_test get_stemname  "broken symlink" "foo/bar2/broken.sym"
-        make_test get_extension "broken symlink" "foo/bar2/broken.sym"
+        make_test get_realpath  "broken symlink" "foo/bar2/broken.sym" "$pwd_phys/foo/bar1/broken.phys"
+        make_test get_dirname   "broken symlink" "foo/bar2/broken.sym" "$pwd_phys/foo/bar1"
+        make_test get_filename  "broken symlink" "foo/bar2/broken.sym" "broken.phys"
+        make_test get_stemname  "broken symlink" "foo/bar2/broken.sym" "broken"
+        make_test get_extension "broken symlink" "foo/bar2/broken.sym" "phys"
 
         echo | $tee_stderr
         echo "### Logical and physical paths from 'foo/' for files that are not symlinks ####" | $tee_stderr
 
-        make_test get_realpath  "ordinary file" "foo/bar1/baz.phys"
-        make_test get_realpath  "ordinary file" "foo/bar1/foo->baz.phys"
-        make_test get_dirname   "ordinary file" "foo/bar1/baz.phys"
-        make_test get_dirname   "ordinary file" "foo/bar1/foo->baz.phys"
-        make_test get_filename  "ordinary file" "foo/bar1/baz.phys"
-        make_test get_filename  "ordinary file" "foo/bar1/foo->baz.phys"
-        make_test get_stemname  "ordinary file" "foo/bar1/baz.phys"
-        make_test get_stemname  "ordinary file" "foo/bar1/foo->baz.phys"
-        make_test get_extension "ordinary file" "foo/bar1/baz.phys"
-        make_test get_extension "ordinary file" "foo/bar1/foo->baz.phys"
+        make_test get_realpath  "ordinary file" "foo/bar1/baz.phys"      "$pwd_phys/foo/bar1/baz.phys"
+        make_test get_realpath  "ordinary file" "foo/bar1/foo->baz.phys" "$pwd_phys/foo/bar1/foo->baz.phys"
+        make_test get_dirname   "ordinary file" "foo/bar1/baz.phys"      "$pwd_phys/foo/bar1"
+        make_test get_dirname   "ordinary file" "foo/bar1/foo->baz.phys" "$pwd_phys/foo/bar1"
+        make_test get_filename  "ordinary file" "foo/bar1/baz.phys"      "baz.phys"
+        make_test get_filename  "ordinary file" "foo/bar1/foo->baz.phys" "foo->baz.phys"
+        make_test get_stemname  "ordinary file" "foo/bar1/baz.phys"      "baz"
+        make_test get_stemname  "ordinary file" "foo/bar1/foo->baz.phys" "foo->baz"
+        make_test get_extension "ordinary file" "foo/bar1/baz.phys"      "phys"
+        make_test get_extension "ordinary file" "foo/bar1/foo->baz.phys" "phys"
 
         echo | $tee_stderr
         echo "### Circular references, paths from 'foo/' for files that are symlinks ########" | $tee_stderr
  
-        make_test get_realpath  "circular ref" "foo/bar1/foo->bar1.sym"
-        make_test get_realpath  "circular ref" "foo/bar2/foo->bar2.sym"
-        make_test get_dirname   "circular ref" "foo/bar1/foo->bar1.sym"
-        make_test get_dirname   "circular ref" "foo/bar2/foo->bar2.sym"
-        make_test get_filename  "circular ref" "foo/bar1/foo->bar1.sym"
-        make_test get_filename  "circular ref" "foo/bar2/foo->bar2.sym"
-        make_test get_stemname  "circular ref" "foo/bar1/foo->bar1.sym"
-        make_test get_stemname  "circular ref" "foo/bar2/foo->bar2.sym"
-        make_test get_extension "circular ref" "foo/bar1/foo->bar1.sym"
-        make_test get_extension "circular ref" "foo/bar2/foo->bar2.sym"
+        make_test get_realpath  "circular ref" "foo/bar1/foo->bar1.sym" ""
+        make_test get_realpath  "circular ref" "foo/bar2/foo->bar2.sym" ""
+        make_test get_dirname   "circular ref" "foo/bar1/foo->bar1.sym" ""
+        make_test get_dirname   "circular ref" "foo/bar2/foo->bar2.sym" ""
+        make_test get_filename  "circular ref" "foo/bar1/foo->bar1.sym" ""
+        make_test get_filename  "circular ref" "foo/bar2/foo->bar2.sym" ""
+        make_test get_stemname  "circular ref" "foo/bar1/foo->bar1.sym" ""
+        make_test get_stemname  "circular ref" "foo/bar2/foo->bar2.sym" ""
+        make_test get_extension "circular ref" "foo/bar1/foo->bar1.sym" ""
+        make_test get_extension "circular ref" "foo/bar2/foo->bar2.sym" ""
 
    } 2>> "$stderr_log"
 
