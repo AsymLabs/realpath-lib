@@ -4,7 +4,7 @@ realpath-lib
 The lightweight and simple Bash library **realpath-lib** provides functions that
 can resolve the full path associated with symlinks and file names.  There are 
 several environments available but by default the function **get_realpath** will
-emulate the popular, but often not available, command utility **readlink -f**.  
+emulate the popular, but often not available, command utility GNU **readlink -f**.  
   
 Core functions are:  
 
@@ -159,15 +159,16 @@ and so on.
 Test Scripts
 ============
   
-Two test scripts have been added that were developed following an issue
-thread of November 2013 that can be found 
-[here](https://github.com/AsymLabs/realpath-lib/issues/1).  
+Two test scripts have been added and successfully tested on Linux, Solaris, 
+Mac OSX and BSD.  These resulted from issues identified within a thread of 
+November 2013 that can be found [here](https://github.com/AsymLabs/realpath-lib/issues/1).  
   
 The scripts are: 1) **make-generic-test.sh** and 2) **make-readlink-test.sh**.
 The **generic** test script can be used to test the script on a specific system,
 whereas the **readlink** script can be used to assess the library against the 
-**readlink** command if it is available on your system.  The scripts can also 
-be used to gain a better understanding of realpath-lib.  
+expected result of the **readlink** command.  Note that, as of the Auno merge of
+February 2014, GNU readlink is no longer required to conduct this test. These
+scripts can also be used to gain a better understanding of realpath-lib.  
   
 As part of tests, a directory and subdirectories are created that are traversed
 in order to test such things as chained symlinks, symlinks of circular 
@@ -306,10 +307,10 @@ Terms
 
 We offer this to the community for free and you may use it as you wish.  
   
-This source is Copyright (C) Applied Numerics Ltd 2013 Great Britain under the
-brand name AsymLabs (TM) and is provided to the community under the MIT license.
-Although we have not yet encountered any issues, there is no warranty of any
-type given so you must use it at your own risk.  
+This source is Copyright (C) Applied Numerics Ltd 2013-2014, Great Britain,
+under the brand name AsymLabs (TM) and is provided to the community under
+the MIT license.  Although we have not yet encountered any issues, there
+is no warranty of any type given so you must use it at your own risk.  
 
 Closure
 =======
@@ -324,4 +325,3 @@ your concerns.
 We hope that you find this Bash library to be of value.  Should you decide to 
 use it on your project, or should you have any comments or suggestions for
 improvement, please contact us at dv@angb.co.  
-
