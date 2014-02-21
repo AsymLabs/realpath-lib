@@ -33,7 +33,7 @@
 #
 #   bash make-readlink-test.sh   # without executable permission
 #
-# Version : 2013.11.19.00
+# Version : 2014.02.21.00
 # Usage   : ./make-readlink-test.sh
 # Output  : results of tests.    
 #
@@ -47,7 +47,7 @@
 # license terms are according to the MIT license that is included within
 # this repository.  Use at your own risk! You have been warned!
 #
-# Written by G R Summers. Last updated on Tue Nov 19 11:19:45 GMT 2013.
+# Written by G R Summers. Last updated on Fri Feb 21 20:58:32 GMT 2014.
 
 #### ENVIRONMENT
 
@@ -180,10 +180,10 @@ make_header | tee "$stdout_log" > "$stderr_log"
         # Using 'set_strict=' for all. 
         # 
         echo | $tee_stderr 
-        echo "==================================================================================" | $tee_stderr
-        echo "=     Testing 'Realpath-Lib' as default 'set_strict=' and 'set_logical='         =" | $tee_stderr
-        echo "=    (default settings will emulate the results of GNU command 'readlink -f')    =" | $tee_stderr
-        echo "==================================================================================" | $tee_stderr
+        echo "===============================================================================" | $tee_stderr
+        echo "=     Testing 'Realpath-Lib' as default 'set_strict=' and 'set_logical='      =" | $tee_stderr
+        echo "=  (default settings will emulate the results of GNU command 'readlink -f')   =" | $tee_stderr
+        echo "===============================================================================" | $tee_stderr
         echo | $tee_stderr
 
         # Begin tests
@@ -299,4 +299,3 @@ tput clear
 $file_reader "$stderr_log"
 
 # end make-readlink-test.sh 
-
