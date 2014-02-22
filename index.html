@@ -1,50 +1,43 @@
-<!doctype html>
+<!DOCTYPE html>
 <html>
+
   <head>
-    <meta charset="utf-8">
-    <meta http-equiv="X-UA-Compatible" content="chrome=1">
-    <title>Realpath-lib by AsymLabs</title>
-    <link rel="stylesheet" href="stylesheets/styles.css">
-    <link rel="stylesheet" href="stylesheets/pygment_trac.css">
-    <script src="https://ajax.googleapis.com/ajax/libs/jquery/1.7.1/jquery.min.js"></script>
-    <script src="javascripts/respond.js"></script>
-    <!--[if lt IE 9]>
-      <script src="//html5shiv.googlecode.com/svn/trunk/html5.js"></script>
-    <![endif]-->
-    <!--[if lt IE 8]>
-    <link rel="stylesheet" href="stylesheets/ie.css">
-    <![endif]-->
-    <meta name="viewport" content="width=device-width, initial-scale=1, user-scalable=no">
+    <meta charset='utf-8' />
+    <meta http-equiv="X-UA-Compatible" content="chrome=1" />
+    <meta name="description" content="Realpath-lib : Bash-centric realpath tools for cross-platform portability." />
 
+    <link rel="stylesheet" type="text/css" media="screen" href="stylesheets/stylesheet.css">
+
+    <title>Realpath-lib</title>
   </head>
+
   <body>
-      <div id="header">
-        <nav>
-          <li class="fork"><a href="https://github.com/AsymLabs/realpath-lib">View On GitHub</a></li>
-          <li class="downloads"><a href="https://github.com/AsymLabs/realpath-lib/zipball/master">ZIP</a></li>
-          <li class="downloads"><a href="https://github.com/AsymLabs/realpath-lib/tarball/master">TAR</a></li>
-          <li class="title">DOWNLOADS</li>
-        </nav>
-      </div><!-- end header -->
 
-    <div class="wrapper">
+    <!-- HEADER -->
+    <div id="header_wrap" class="outer">
+        <header class="inner">
+          <a id="forkme_banner" href="https://github.com/AsymLabs/realpath-lib">View on GitHub</a>
 
-      <section>
-        <div id="title">
-          <h1>Realpath-lib</h1>
-          <p>Bash-centric realpath tools for cross-platform portability.</p>
-          <hr>
-          <span class="credits left">Project maintained by <a href="https://github.com/AsymLabs">AsymLabs</a></span>
-          <span class="credits right">Hosted on GitHub Pages &mdash; Theme by <a href="https://twitter.com/michigangraham">mattgraham</a></span>
-        </div>
+          <h1 id="project_title">Realpath-lib</h1>
+          <h2 id="project_tagline">Bash-centric realpath tools for cross-platform portability.</h2>
 
+            <section id="downloads">
+              <a class="zip_download_link" href="https://github.com/AsymLabs/realpath-lib/zipball/master">Download this project as a .zip file</a>
+              <a class="tar_download_link" href="https://github.com/AsymLabs/realpath-lib/tarball/master">Download this project as a tar.gz file</a>
+            </section>
+        </header>
+    </div>
+
+    <!-- MAIN CONTENT -->
+    <div id="main_content_wrap" class="outer">
+      <section id="main_content" class="inner">
         <h1>
 <a name="realpath-lib" class="anchor" href="#realpath-lib"><span class="octicon octicon-link"></span></a>realpath-lib</h1>
 
 <p>The lightweight and simple Bash library <strong>realpath-lib</strong> provides functions that
 can resolve the full path associated with symlinks and file names.  There are 
 several environments available but by default the function <strong>get_realpath</strong> will
-emulate the popular, but often not available, command utility <strong>readlink -f</strong>.  </p>
+emulate the popular, but often not available, command utility GNU <strong>readlink -f</strong>.  </p>
 
 <p>Core functions are:  </p>
 
@@ -223,15 +216,16 @@ set_strict=     set_logical=true set_max_depth=10 get_stemname 'path-arg'
 <h1>
 <a name="test-scripts" class="anchor" href="#test-scripts"><span class="octicon octicon-link"></span></a>Test Scripts</h1>
 
-<p>Two test scripts have been added that were developed following an issue
-thread of November 2013 that can be found 
-<a href="https://github.com/AsymLabs/realpath-lib/issues/1">here</a>.  </p>
+<p>Two test scripts have been added and successfully tested on Linux, Solaris, 
+Mac OSX and BSD.  These resulted from issues identified within a thread of 
+November 2013 that can be found <a href="https://github.com/AsymLabs/realpath-lib/issues/1">here</a>.  </p>
 
 <p>The scripts are: 1) <strong>make-generic-test.sh</strong> and 2) <strong>make-readlink-test.sh</strong>.
 The <strong>generic</strong> test script can be used to test the script on a specific system,
 whereas the <strong>readlink</strong> script can be used to assess the library against the 
-<strong>readlink</strong> command if it is available on your system.  The scripts can also 
-be used to gain a better understanding of realpath-lib.  </p>
+expected result of the <strong>readlink</strong> command.  Note that, as of the Auno merge of
+February 2014, GNU readlink is no longer required to conduct this test. These
+scripts can also be used to gain a better understanding of realpath-lib.  </p>
 
 <p>As part of tests, a directory and subdirectories are created that are traversed
 in order to test such things as chained symlinks, symlinks of circular 
@@ -376,10 +370,10 @@ is required.  </p>
 
 <p>We offer this to the community for free and you may use it as you wish.  </p>
 
-<p>This source is Copyright (C) Applied Numerics Ltd 2013 Great Britain under the
-brand name AsymLabs (TM) and is provided to the community under the MIT license.
-Although we have not yet encountered any issues, there is no warranty of any
-type given so you must use it at your own risk.  </p>
+<p>This source is Copyright (C) Applied Numerics Ltd 2013-2014, Great Britain,
+under the brand name AsymLabs (TM) and is provided to the community under
+the MIT license.  Although we have not yet encountered any issues, there
+is no warranty of any type given so you must use it at your own risk.  </p>
 
 <h1>
 <a name="closure" class="anchor" href="#closure"><span class="octicon octicon-link"></span></a>Closure</h1>
@@ -395,9 +389,17 @@ your concerns.  </p>
 use it on your project, or should you have any comments or suggestions for
 improvement, please contact us at <a href="mailto:dv@angb.co">dv@angb.co</a>.  </p>
       </section>
-
     </div>
-    <!--[if !IE]><script>fixScale(document);</script><![endif]-->
+
+    <!-- FOOTER  -->
+    <div id="footer_wrap" class="outer">
+      <footer class="inner">
+        <p class="copyright">Realpath-lib maintained by <a href="https://github.com/AsymLabs">AsymLabs</a></p>
+        <p>Published with <a href="http://pages.github.com">GitHub Pages</a></p>
+      </footer>
+    </div>
+
     
+
   </body>
 </html>
